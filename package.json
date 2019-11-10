@@ -1,0 +1,26 @@
+{
+	"name": "@dependency/graphTraversal-implementation",
+	"version": "1.0.0",
+	"main": "./entrypoint/programmaticAPI",
+	"scripts": {
+		"setup": "yarn install --production=false",
+		"test": "yarn run scriptManager @dependency/deploymentScript \".test.default({ testPath: ['./test'], shouldDebugger: false, shouldCompileTest: true })\"",
+		"test-break": "export NODE_OPTIONS='--inspect-brk' && yarn run scriptManager @dependency/deploymentScript \".test.default({ testPath: ['./test'], shouldDebugger: false, shouldCompileTest: true })\"",
+		"bumpVersion": "yarn run scriptManager shouldCompileScript=true JSProject/packageVersion \".bumpVersion({})\"",
+		"buildAndRelease": "yarn run scriptManager shouldCompileScript=true @dependency/deploymentScript \".buildAndRelease.moduleProject({})\"",
+		"build": "yarn run scriptManager shouldCompileScript=true @dependency/deploymentScript \".buildSourceCode.moduleProject({}, {compile:[/**'./test'*/]})\"",
+		"loadGraphData": "yarn run scriptManager shouldCompileScript=true graphDatabase/graphDataLoading.js \".loadGraphDataFromFile({ shouldClearDatabase: true, graphDataFilePath: './test/asset/graphData.exported.json',  url: { protocol: 'bolt', hostname: 'localhost', port: 7687 }  })\"",
+		"exportGraphData": "yarn run scriptManager shouldCompileScript=true graphDatabase/graphDataLoading \".exportAllGraphData({targetPath: './resource',fileName: 'graphData.json'})\"",
+	},
+	"dependencies": {
+		"uuid": "^3.3.2"
+
+	},
+	"devDependencies": {
+		"@dependency/deploymentScript": "https://github.com/AppScriptIO/deploymentScript#semver:^1.x.x",
+		"@dependency/javascriptStaticAnalysis": "https://github.com/AppScriptIO/javascriptStaticAnalysis#semver:^1.x.x",
+		"@dependency/javascriptTranspilation": "https://github.com/AppScriptIO/javascriptTranspilation#semver:^1.x.x",
+		"@dependency/scriptManager": "https://github.com/AppScriptIO/scriptManager#semver:^1.x.x",
+		"typescript": "^3.3.3333"
+	}
+}
