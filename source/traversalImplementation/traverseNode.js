@@ -1,5 +1,4 @@
 import assert from 'assert'
-import { graphScheme as schemeReference} from '@dependency/graphTraversal'
 
 /**
  * @description loops through all the `node ports` and initializes each one to execute the `node connections` specific for it.
@@ -13,7 +12,7 @@ export async function* iterateFork({ node, additionalChildNode, graphInstance })
   forkArray.sort((former, latter) => former.connection.properties.order - latter.connection.properties.order) // using `order` property
 
   for (let fork of forkArray) {
-    assert(fork.destination.labels.includes(schemeReference.nodeLabel.port), `• "${fork.destination.labels}" Unsupported node type for a FORK connection.`) // verify node type
+    assert(fork.destination.labels.includes(graphInstance.schemeReference.nodeLabel.port), `• "${fork.destination.labels}" Unsupported node type for a FORK connection.`) // verify node type
     let traversalConfig = { handlePropagationImplementation: fork.destination.properties.handlePropagationImplementation }
     let nextIterator = yield {
       traversalConfig,

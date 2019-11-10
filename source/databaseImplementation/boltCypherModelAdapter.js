@@ -1,7 +1,6 @@
 import assert from 'assert'
 const boltProtocolDriver = require('neo4j-driver').v1
 import generateUUID from 'uuid/v4'
-import { graphScheme as schemeReference} from '@dependency/graphTraversal'
 // convention of data structure - `connection: { source: [<nodeKey>, <portKey>], destination: [<nodeKey>, <portKey>] }`
 const jsonToCepherAdapter = {
   convertObjectToCepherProperty(object) {
@@ -30,8 +29,8 @@ const jsonToCepherAdapter = {
   },
 }
 
-export function boltCypherModelAdapterFunction({  url = { protocol: 'bolt', hostname: 'localhost', port: 7687 }, authentication = { username: 'neo4j', password: 'test' } } = {}) {
-  
+export function boltCypherModelAdapterFunction({ schemeReference, url = { protocol: 'bolt', hostname: 'localhost', port: 7687 }, authentication = { username: 'neo4j', password: 'test' } } = {}) {
+  assert(schemeReference, `• schemeReference must be passed to initialize the model adapter.`)
   const graphDBDriver = boltProtocolDriver.driver(`${url.protocol}://${url.hostname}:${url.port}`, boltProtocolDriver.auth.basic(authentication.username, authentication.password), {
     disableLosslessIntegers: true, // neo4j represents IDs as integers, and through the JS driver transforms them to strings to represent high values approximately 2^53 +
     // maxConnectionPoolSize: process.env.DRIVER_MAX_CONNECTION_POOL_SIZE || 50,                     // maximum number of connections to the connection pool

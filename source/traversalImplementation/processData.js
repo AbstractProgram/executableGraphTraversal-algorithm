@@ -1,7 +1,6 @@
 import path from 'path'
 import assert from 'assert'
 import { exec, execSync, spawn, spawnSync } from 'child_process'
-import { graphScheme as schemeReference} from '@dependency/graphTraversal'
 
 export async function returnDataItemKey({ stageNode, processNode, graphInstance, nextProcessData }, { additionalParameter, traverseCallContext }) {
   if (processNode.properties?.name) return `${processNode.properties?.name}`
@@ -44,7 +43,7 @@ const executeFunctionReference = async function({ stageNode, processNode, graphI
   else if (resourceArray.length == 0) return
   else resource = resourceArray[0]
 
-  assert(resource.source.labels.includes(schemeReference.nodeLabel.function), `• Unsupported Node type for resource connection.`)
+  assert(resource.source.labels.includes(graphInstance.schemeReference.nodeLabel.function), `• Unsupported Node type for resource connection.`)
   let functionName = resource.source.properties.functionName || throw new Error(`• function resource must have a "functionName" - ${resource.source.properties.functionName}`)
   let functionCallback = referenceContext[functionName] || throw new Error(`• reference function name doesn't exist.`)
   try {
@@ -173,7 +172,7 @@ export const immediatelyExecuteMiddleware = async ({ stageNode, processNode, gra
   else if (resourceArray.length == 0) return
   else resource = resourceArray[0]
 
-  assert(resource.source.labels.includes(schemeReference.nodeLabel.function), `• Unsupported Node type for resource connection.`)
+  assert(resource.source.labels.includes(graphInstance.schemeReference.nodeLabel.function), `• Unsupported Node type for resource connection.`)
   let functionName = resource.source.properties.functionName || throw new Error(`• function resource must have a "functionName" - ${resource.source.properties.functionName}`)
   // a function that complies with graphTraversal processData implementation.
   let functionCallback = referenceContext[functionName] || throw new Error(`• reference function name doesn't exist.`)

@@ -13,7 +13,6 @@
 		"exportGraphData": "yarn run scriptManager shouldCompileScript=true graphDatabase/graphDataLoading \".exportAllGraphData({targetPath: './resource',fileName: 'graphData.json'})\""
 	},
 	"dependencies": {
-		"@dependency/graphTraversal": "https://github.com/AppScriptIO/graphTraversal#semver:^1.x.x",
 		"@dependency/promiseProperRace": "https://github.com/AppScriptIO/promiseProperRace#semver:^1.x.x",
 		"neo4j-driver": "^1.7.5",
 		"redisgraph.js": "^1.1.4",
