@@ -1,8 +1,7 @@
 import assert from 'assert'
 const boltProtocolDriver = require('neo4j-driver').v1
 import generateUUID from 'uuid/v4'
-import { nodeLabel, connectionType } from '../../graphModel/graphSchemeReference.js'
-
+import { graphScheme as schemeReference} from '@dependency/graphTraversal'
 // convention of data structure - `connection: { source: [<nodeKey>, <portKey>], destination: [<nodeKey>, <portKey>] }`
 const jsonToCepherAdapter = {
   convertObjectToCepherProperty(object) {
@@ -31,7 +30,8 @@ const jsonToCepherAdapter = {
   },
 }
 
-export function boltCypherModelAdapterFunction({ url = { protocol: 'bolt', hostname: 'localhost', port: 7687 }, authentication = { username: 'neo4j', password: 'test' } } = {}) {
+export function boltCypherModelAdapterFunction({  url = { protocol: 'bolt', hostname: 'localhost', port: 7687 }, authentication = { username: 'neo4j', password: 'test' } } = {}) {
+  
   const graphDBDriver = boltProtocolDriver.driver(`${url.protocol}://${url.hostname}:${url.port}`, boltProtocolDriver.auth.basic(authentication.username, authentication.password), {
     disableLosslessIntegers: true, // neo4j represents IDs as integers, and through the JS driver transforms them to strings to represent high values approximately 2^53 +
     // maxConnectionPoolSize: process.env.DRIVER_MAX_CONNECTION_POOL_SIZE || 50,                     // maximum number of connections to the connection pool
@@ -47,7 +47,7 @@ export function boltCypherModelAdapterFunction({ url = { protocol: 'bolt', hostn
     // load nodes and connections from json file data.
     async loadGraphData({ nodeEntryData = [], connectionEntryData = [] } = {}) {
       // deal with `NodeReference`
-      let referenceNodeArray = nodeEntryData.filter(node => node.labels.includes(nodeLabel.nodeReference)) // extract `NodeReference` nodes
+      let referenceNodeArray = nodeEntryData.filter(node => node.labels.includes(schemeReference.nodeLabel.nodeReference)) // extract `NodeReference` nodes
       nodeEntryData = nodeEntryData.filter(node => !referenceNodeArray.some(i => i == node)) // remove reference nodes from node array.
       let referenceNodeMap = new Map()
       let reintroduceNodeArray = []
@@ -118,7 +118,7 @@ export function boltCypherModelAdapterFunction({ url = { protocol: 'bolt', hostn
     },
     addConnection: async ({ connectionData /*conforms with the Cypher query results data convention*/, idMap /*Use identities to create edges */ }) => {
       assert(typeof connectionData.start == 'number' && typeof connectionData.end == 'number', `• Connection must have a start and end nodes.`)
-      if (connectionData.type == connectionType.next) assert(connectionData.properties?.key, '• Connection object must have a key property.')
+      if (connectionData.type == schemeReference.connectionType.next) assert(connectionData.properties?.key, '• Connection object must have a key property.')
       let nodeArray = await implementation.getAllNode()
       let session = await graphDBDriver.session()
 
@@ -149,7 +149,7 @@ export function boltCypherModelAdapterFunction({ url = { protocol: 'bolt', hostn
       let query = `
         match 
           (source { key: '${sourceKey}' })
-          -[l:${connectionType.next}]->
+          -[l:${schemeReference.connectionType.next}]->
           (destination${destinationNodeType ? `:${destinationNodeType}` : ''}) 
         return l
         order by destination.key
