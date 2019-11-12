@@ -32,7 +32,7 @@ Used for:
     - return middleware reference names, and then matching the names to function outside the traversal.
     - Executing generator functions with node arguments that produce middleware functions.
  */
-const executeFunctionReference = async function({ stageNode, processNode, graphInstance, nextProcessData }, { additionalParameter, traverseCallContext }) {
+export const executeFunctionReference = async function({ stageNode, processNode, graphInstance, nextProcessData }, { additionalParameter, traverseCallContext }) {
   let contextPropertyName = 'functionReferenceContext', // TODO: after migrating to own repository, use Symbols instead of string keys and export them for client usage.
     referenceContext = graphInstance.context[contextPropertyName]
   assert(referenceContext, `• Context "${contextPropertyName}" variable is required to reference functions from graph database strings.`)
