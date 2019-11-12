@@ -1,94 +1,95 @@
-import promiseProperRace from '@dependency/promiseProperRace'
-import { resolve } from 'path'
-// import { iterateConnection } from './iterateConnection.js'
+"use strict";var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports, "__esModule", { value: true });exports.chronological_implementationUsingWhileLoop = exports.chronological = exports.allPromise = exports.raceFirstPromise = void 0;var _skipFirstGeneratorNext2 = _interopRequireDefault(require("@babel/runtime/helpers/skipFirstGeneratorNext"));var _promiseProperRace = _interopRequireDefault(require("@dependency/promiseProperRace"));let _original_raceFirstPromise = async function*
 
-/**
- * Race promise of nodes - first to resolve is the one to be returned
- */
-export async function* raceFirstPromise({ nodeIteratorFeed, emit }) {
-  let g = { iterator: nodeIteratorFeed }
-  g.result = await g.iterator.next() // initialize generator function execution and pass execution configurations.
-  let nodePromiseArray = []
+
+
+
+
+
+raceFirstPromise({ nodeIteratorFeed, emit }) {let _functionSent = yield;
+  let g = { iterator: nodeIteratorFeed };
+  g.result = await g.iterator.next();
+  let nodePromiseArray = [];
   while (!g.result.done) {
-    let nodeData = g.result.value
-    yield { node: nodeData }
-    let { promise } = function.sent
-    nodePromiseArray.push(promise)
-    g.result = await g.iterator.next()
+    let nodeData = g.result.value;
+    _functionSent = yield { node: nodeData };
+    let { promise } = _functionSent;
+    nodePromiseArray.push(promise);
+    g.result = await g.iterator.next();
   }
-  let nodeResolvedResult = await promiseProperRace(nodePromiseArray)
-    .then(resolvedPromiseArray => {
-      return resolvedPromiseArray[0] // as only one promise is return in the array - the first promise to be resolved.
-    })
-    .catch(error => {
-      if (process.env.SZN_DEBUG == 'true') console.error(`🔀⚠️ promiseProperRace rejected because: ${error}`)
-      else console.log(`🔀⚠️ promiseProperRace rejected because: ${error}`)
-    })
+  let nodeResolvedResult = await (0, _promiseProperRace.default)(nodePromiseArray).
+  then(resolvedPromiseArray => {
+    return resolvedPromiseArray[0];
+  }).
+  catch(error => {
+    if (process.env.SZN_DEBUG == 'true') console.error(`🔀⚠️ promiseProperRace rejected because: ${error}`);else
+    console.log(`🔀⚠️ promiseProperRace rejected because: ${error}`);
+  });
   if (nodeResolvedResult) {
-    emit(nodeResolvedResult) // emitting result is not immediate in this case, because the objective is to get a single resolved promise, and "promiseProperRace" maybe doesn't have the ability to stop uncompleted promises.
-    return [nodeResolvedResult] // returned results must be wrapped in array so it could be forwarded through yeild* generator.
+    emit(nodeResolvedResult);
+    return [nodeResolvedResult];
   }
-}
+},_modified_raceFirstPromise = (0, _skipFirstGeneratorNext2.default)(_original_raceFirstPromise);let raceFirstPromise = new Proxy(_original_raceFirstPromise, { apply(target, thisArgument, argumentsList) {return Reflect.apply(_modified_raceFirstPromise, thisArgument, argumentsList);} });exports.raceFirstPromise = raceFirstPromise;let _original_allPromise = async function*
 
-/**
- * Insures all nodeConnection promises resolves.
- **/
-export async function* allPromise({ nodeIteratorFeed, emit }) {
-  let g = { iterator: nodeIteratorFeed }
-  g.result = await g.iterator.next() // initialize generator function execution and pass execution configurations.
-  let nodePromiseArray = [] // order of call initialization
-  let resolvedOrderedNodeResolvedResult = [] // order of completion
+
+
+
+allPromise({ nodeIteratorFeed, emit }) {let _functionSent2 = yield;
+  let g = { iterator: nodeIteratorFeed };
+  g.result = await g.iterator.next();
+  let nodePromiseArray = [];
+  let resolvedOrderedNodeResolvedResult = [];
   while (!g.result.done) {
-    let nodeData = g.result.value
-    yield { node: nodeData }
-    let { promise } = function.sent
-    nodePromiseArray.push(promise) // promises are in the same arrangment of connection iteration.
-    promise.then(result => emit(result)) // emit result for immediate usage by lisnters
-    promise.then(result => resolvedOrderedNodeResolvedResult.push(result)) // arrange promises according to resolution order.
-    g.result = await g.iterator.next()
+    let nodeData = g.result.value;
+    _functionSent2 = yield { node: nodeData };
+    let { promise } = _functionSent2;
+    nodePromiseArray.push(promise);
+    promise.then(result => emit(result));
+    promise.then(result => resolvedOrderedNodeResolvedResult.push(result));
+    g.result = await g.iterator.next();
   }
-  // resolve all promises
+
   let nodeResolvedResultArray = await Promise.all(nodePromiseArray).catch(error => {
-    if (process.env.SZN_DEBUG == 'true') console.error(`🔀⚠️ \`Promise.all\` for nodeConnectionArray rejected because: ${error}`)
-    else console.log(error)
-  })
-  // ordered results according to promise completion.
-  return resolvedOrderedNodeResolvedResult // return for all resolved results
+    if (process.env.SZN_DEBUG == 'true') console.error(`🔀⚠️ \`Promise.all\` for nodeConnectionArray rejected because: ${error}`);else
+    console.log(error);
+  });
 
-  // Preserves the order of nodes original in connection array, i.e. does not order the node results according to the execution completion, rather according to the first visited during traversal.
-  // for (let nextResult of nodeResolvedResultArray) {
-  //   emit(nextResult)
-  // }
-}
+  return resolvedOrderedNodeResolvedResult;
 
-/**
- * Sequential node execution - await each node till it finishes execution.
- **/
-export async function* chronological({ nodeIteratorFeed, emit }) {
-  let nodeResultList = []
+
+
+
+
+},_modified_allPromise = (0, _skipFirstGeneratorNext2.default)(_original_allPromise);let allPromise = new Proxy(_original_allPromise, { apply(target, thisArgument, argumentsList) {return Reflect.apply(_modified_allPromise, thisArgument, argumentsList);} });exports.allPromise = allPromise;let _original_chronological = async function*
+
+
+
+
+chronological({ nodeIteratorFeed, emit }) {let _functionSent3 = yield;
+  let nodeResultList = [];
   for await (let nodeData of nodeIteratorFeed) {
-    yield { node: nodeData }
-    let { promise } = function.sent
-    let nextResult = await promise
-    emit(nextResult) // emit for immediate consumption
-    nodeResultList.push(nextResult)
+    _functionSent3 = yield { node: nodeData };
+    let { promise } = _functionSent3;
+    let nextResult = await promise;
+    emit(nextResult);
+    nodeResultList.push(nextResult);
   }
-  return nodeResultList
-}
+  return nodeResultList;
+},_modified_chronological = (0, _skipFirstGeneratorNext2.default)(_original_chronological);let chronological = new Proxy(_original_chronological, { apply(target, thisArgument, argumentsList) {return Reflect.apply(_modified_chronological, thisArgument, argumentsList);} });exports.chronological = chronological;let _original_chronological_implementationUsingWhileLoop = async function*
 
-// implementation using while loop instead of `for await`, as it allows for passing initial config value for the generator function (that will use function.sent to catch it.)
-export async function* chronological_implementationUsingWhileLoop({ nodeIteratorFeed, emit }) {
-  let nodeResultList = []
-  let g = { iterator: nodeIteratorFeed }
-  g.result = await g.iterator.next() // initialize generator function execution and pass execution configurations.
+
+chronological_implementationUsingWhileLoop({ nodeIteratorFeed, emit }) {let _functionSent4 = yield;
+  let nodeResultList = [];
+  let g = { iterator: nodeIteratorFeed };
+  g.result = await g.iterator.next();
   while (!g.result.done) {
-    let nodeData = g.result.value
-    yield { node: nodeData }
-    let { promise } = function.sent
-    let nextResult = await promise
-    emit(nextResult) // emit for immediate consumption
-    nodeResultList.push(nextResult)
-    g.result = await g.iterator.next()
+    let nodeData = g.result.value;
+    _functionSent4 = yield { node: nodeData };
+    let { promise } = _functionSent4;
+    let nextResult = await promise;
+    emit(nextResult);
+    nodeResultList.push(nextResult);
+    g.result = await g.iterator.next();
   }
-  return nodeResultList
-}
+  return nodeResultList;
+},_modified_chronological_implementationUsingWhileLoop = (0, _skipFirstGeneratorNext2.default)(_original_chronological_implementationUsingWhileLoop);let chronological_implementationUsingWhileLoop = new Proxy(_original_chronological_implementationUsingWhileLoop, { apply(target, thisArgument, argumentsList) {return Reflect.apply(_modified_chronological_implementationUsingWhileLoop, thisArgument, argumentsList);} });exports.chronological_implementationUsingWhileLoop = chronological_implementationUsingWhileLoop;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9oYW5kbGVQcm9wYWdhdGlvbi5qcyJdLCJuYW1lcyI6WyJyYWNlRmlyc3RQcm9taXNlIiwibm9kZUl0ZXJhdG9yRmVlZCIsImVtaXQiLCJnIiwiaXRlcmF0b3IiLCJyZXN1bHQiLCJuZXh0Iiwibm9kZVByb21pc2VBcnJheSIsImRvbmUiLCJub2RlRGF0YSIsInZhbHVlIiwibm9kZSIsInByb21pc2UiLCJwdXNoIiwibm9kZVJlc29sdmVkUmVzdWx0IiwidGhlbiIsInJlc29sdmVkUHJvbWlzZUFycmF5IiwiY2F0Y2giLCJlcnJvciIsInByb2Nlc3MiLCJlbnYiLCJTWk5fREVCVUciLCJjb25zb2xlIiwibG9nIiwiYWxsUHJvbWlzZSIsInJlc29sdmVkT3JkZXJlZE5vZGVSZXNvbHZlZFJlc3VsdCIsIm5vZGVSZXNvbHZlZFJlc3VsdEFycmF5IiwiUHJvbWlzZSIsImFsbCIsImNocm9ub2xvZ2ljYWwiLCJub2RlUmVzdWx0TGlzdCIsIm5leHRSZXN1bHQiLCJjaHJvbm9sb2dpY2FsX2ltcGxlbWVudGF0aW9uVXNpbmdXaGlsZUxvb3AiXSwibWFwcGluZ3MiOiJvWkFBQSwwRjs7Ozs7OztBQU91QkEsZ0IsQ0FBaUIsRUFBRUMsZ0JBQUYsRUFBb0JDLElBQXBCLEUsRUFBNEI7QUFDbEUsTUFBSUMsQ0FBQyxHQUFHLEVBQUVDLFFBQVEsRUFBRUgsZ0JBQVosRUFBUjtBQUNBRSxFQUFBQSxDQUFDLENBQUNFLE1BQUYsR0FBVyxNQUFNRixDQUFDLENBQUNDLFFBQUYsQ0FBV0UsSUFBWCxFQUFqQjtBQUNBLE1BQUlDLGdCQUFnQixHQUFHLEVBQXZCO0FBQ0EsU0FBTyxDQUFDSixDQUFDLENBQUNFLE1BQUYsQ0FBU0csSUFBakIsRUFBdUI7QUFDckIsUUFBSUMsUUFBUSxHQUFHTixDQUFDLENBQUNFLE1BQUYsQ0FBU0ssS0FBeEI7QUFDQSwwQkFBTSxFQUFFQyxJQUFJLEVBQUVGLFFBQVIsRUFB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QUFDNkIsVUFBRCxDQUFKO0FBQ0FELElBQUFBLGNBQWMsQ0FBQ2pCLElBQWYsQ0FBb0JrQixVQUFwQjtBQUNEO0FBQ0QsU0FBT0QsY0FBUDtBQUNELEMsOEZBVnNCRCxhOzs7QUFhQUcsMEMsQ0FBMkMsRUFBRS9CLGdCQUFGLEVBQW9CQyxJQUFwQixFLEVBQTRCO0FBQzVGLE1BQUk0QixjQUFjLEdBQUcsRUFBckI7QUFDQSxNQUFJM0IsQ0FBQyxHQUFHLEVBQUVDLFFBQVEsRUFBRUgsZ0JBQVosRUFBUjtBQUNBRSxFQUFBQSxDQUFDLENBQUNFLE1BQUYsR0FBVyxNQUFNRixDQUFDLENBQUNDLFFBQUYsQ0FBV0UsSUFBWCxFQUFqQjtBQUNBLFNBQU8sQ0FBQ0gsQ0FBQyxDQUFDRSxNQUFGLENBQVNHLElBQWpCLEVBQXVCO0FBQ3JCLFFBQUlDLFFBQVEsR0FBR04sQ0FBQyxDQUFDRSxNQUFGLENBQVNLLEtBQXhCO0FBQ0EsMkJBQU0sRUFBRUMsSUFBSSxFQUFFRixRQUFSLEVBQU47QUFDQSxRQUFJLEVBQUVHLE9BQUYsbUJBQUo7QUFDQSxRQUFJbUIsVUFBVSxHQUFHLE1BQU1uQixPQUF2QjtBQUNBVixJQUFBQSxJQUFJLENBQUM2QixVQUFELENBQUo7QUFDQUQsSUFBQUEsY0FBYyxDQUFDakIsSUFBZixDQUFvQmtCLFVBQXBCO0FBQ0E1QixJQUFBQSxDQUFDLENBQUNFLE1BQUYsR0FBVyxNQUFNRixDQUFDLENBQUNDLFFBQUYsQ0FBV0UsSUFBWCxFQUFqQjtBQUNEO0FBQ0QsU0FBT3dCLGNBQVA7QUFDRCxDLHdKQWRzQkUsMEMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgcHJvbWlzZVByb3BlclJhY2UgZnJvbSAnQGRlcGVuZGVuY3kvcHJvbWlzZVByb3BlclJhY2UnXG5pbXBvcnQgeyByZXNvbHZlIH0gZnJvbSAncGF0aCdcbi8vIGltcG9ydCB7IGl0ZXJhdGVDb25uZWN0aW9uIH0gZnJvbSAnLi9pdGVyYXRlQ29ubmVjdGlvbi5qcydcblxuLyoqXG4gKiBSYWNlIHByb21pc2Ugb2Ygbm9kZXMgLSBmaXJzdCB0byByZXNvbHZlIGlzIHRoZSBvbmUgdG8gYmUgcmV0dXJuZWRcbiAqL1xuZXhwb3J0IGFzeW5jIGZ1bmN0aW9uKiByYWNlRmlyc3RQcm9taXNlKHsgbm9kZUl0ZXJhdG9yRmVlZCwgZW1pdCB9KSB7XG4gIGxldCBnID0geyBpdGVyYXRvcjogbm9kZUl0ZXJhdG9yRmVlZCB9XG4gIGcucmVzdWx0ID0gYXdhaXQgZy5pdGVyYXRvci5uZXh0KCkgLy8gaW5pdGlhbGl6ZSBnZW5lcmF0b3IgZnVuY3Rpb24gZXhlY3V0aW9uIGFuZCBwYXNzIGV4ZWN1dGlvbiBjb25maWd1cmF0aW9ucy5cbiAgbGV0IG5vZGVQcm9taXNlQXJyYXkgPSBbXVxuICB3aGlsZSAoIWcucmVzdWx0LmRvbmUpIHtcbiAgICBsZXQgbm9kZURhdGEgPSBnLnJlc3VsdC52YWx1ZVxuICAgIHlpZWxkIHsgbm9kZTogbm9kZURhdGEgfVxuICAgIGxldCB7IHByb21pc2UgfSA9IGZ1bmN0aW9uLnNlbnRcbiAgICBub2RlUHJvbWlzZUFycmF5LnB1c2gocHJvbWlzZSlcbiAgICBnLnJlc3VsdCA9IGF3YWl0IGcuaXRlcmF0b3IubmV4dCgpXG4gIH1cbiAgbGV0IG5vZGVSZXNvbHZlZFJlc3VsdCA9IGF3YWl0IHByb21pc2VQcm9wZXJSYWNlKG5vZGVQcm9taXNlQXJyYXkpXG4gICAgLnRoZW4ocmVzb2x2ZWRQcm9taXNlQXJyYXkgPT4ge1xuICAgICAgcmV0dXJuIHJlc29sdmVkUHJvbWlzZUFycmF5WzBdIC8vIGFzIG9ubHkgb25lIHByb21pc2UgaXMgcmV0dXJuIGluIHRoZSBhcnJheSAtIHRoZSBmaXJzdCBwcm9taXNlIHRvIGJlIHJlc29sdmVkLlxuICAgIH0pXG4gICAgLmNhdGNoKGVycm9yID0+IHtcbiAgICAgIGlmIChwcm9jZXNzLmVudi5TWk5fREVCVUcgPT0gJ3RydWUnKSBjb25zb2xlLmVycm9yKGDwn5SA4pqg77iPIHByb21pc2VQcm9wZXJSYWNlIHJlamVjdGVkIGJlY2F1c2U6ICR7ZXJyb3J9YClcbiAgICAgIGVsc2UgY29uc29sZS5sb2coYPCflIDimqDvuI8gcHJvbWlzZVByb3BlclJhY2UgcmVqZWN0ZWQgYmVjYXVzZTogJHtlcnJvcn1gKVxuICAgIH0pXG4gIGlmIChub2RlUmVzb2x2ZWRSZXN1bHQpIHtcbiAgICBlbWl0KG5vZGVSZXNvbHZlZFJlc3VsdCkgLy8gZW1pdHRpbmcgcmVzdWx0IGlzIG5vdCBpbW1lZGlhdGUgaW4gdGhpcyBjYXNlLCBiZWNhdXNlIHRoZSBvYmplY3RpdmUgaXMgdG8gZ2V0IGEgc2luZ2xlIHJlc29sdmVkIHByb21pc2UsIGFuZCBcInByb21pc2VQcm9wZXJSYWNlXCIgbWF5YmUgZG9lc24ndCBoYXZlIHRoZSBhYmlsaXR5IHRvIHN0b3AgdW5jb21wbGV0ZWQgcHJvbWlzZXMuXG4gICAgcmV0dXJuIFtub2RlUmVzb2x2ZWRSZXN1bHRdIC8vIHJldHVybmVkIHJlc3VsdHMgbXVzdCBiZSB3cmFwcGVkIGluIGFycmF5IHNvIGl0IGNvdWxkIGJlIGZvcndhcmRlZCB0aHJvdWdoIHllaWxkKiBnZW5lcmF0b3IuXG4gIH1cbn1cblxuLyoqXG4gKiBJbnN1cmVzIGFsbCBub2RlQ29ubmVjdGlvbiBwcm9taXNlcyByZXNvbHZlcy5cbiAqKi9cbmV4cG9ydCBhc3luYyBmdW5jdGlvbiogYWxsUHJvbWlzZSh7IG5vZGVJdGVyYXRvckZlZWQsIGVtaXQgfSkge1xuICBsZXQgZyA9IHsgaXRlcmF0b3I6IG5vZGVJdGVyYXRvckZlZWQgfVxuICBnLnJlc3VsdCA9IGF3YWl0IGcuaXRlcmF0b3IubmV4dCgpIC8vIGluaXRpYWxpemUgZ2VuZXJhdG9yIGZ1bmN0aW9uIGV4ZWN1dGlvbiBhbmQgcGFzcyBleGVjdXRpb24gY29uZmlndXJhdGlvbnMuXG4gIGxldCBub2RlUHJvbWlzZUFycmF5ID0gW10gLy8gb3JkZXIgb2YgY2FsbCBpbml0aWFsaXphdGlvblxuICBsZXQgcmVzb2x2ZWRPcmRlcmVkTm9kZVJlc29sdmVkUmVzdWx0ID0gW10gLy8gb3JkZXIgb2YgY29tcGxldGlvblxuICB3aGlsZSAoIWcucmVzdWx0LmRvbmUpIHtcbiAgICBsZXQgbm9kZURhdGEgPSBnLnJlc3VsdC52YWx1ZVxuICAgIHlpZWxkIHsgbm9kZTogbm9kZURhdGEgfVxuICAgIGxldCB7IHByb21pc2UgfSA9IGZ1bmN0aW9uLnNlbnRcbiAgICBub2RlUHJvbWlzZUFycmF5LnB1c2gocHJvbWlzZSkgLy8gcHJvbWlzZXMgYXJlIGluIHRoZSBzYW1lIGFycmFuZ21lbnQgb2YgY29ubmVjdGlvbiBpdGVyYXRpb24uXG4gICAgcHJvbWlzZS50aGVuKHJlc3VsdCA9PiBlbWl0KHJlc3VsdCkpIC8vIGVtaXQgcmVzdWx0IGZvciBpbW1lZGlhdGUgdXNhZ2UgYnkgbGlzbnRlcnNcbiAgICBwcm9taXNlLnRoZW4ocmVzdWx0ID0+IHJlc29sdmVkT3JkZXJlZE5vZGVSZXNvbHZlZFJlc3VsdC5wdXNoKHJlc3VsdCkpIC8vIGFycmFuZ2UgcHJvbWlzZXMgYWNjb3JkaW5nIHRvIHJlc29sdXRpb24gb3JkZXIuXG4gICAgZy5yZXN1bHQgPSBhd2FpdCBnLml0ZXJhdG9yLm5leHQoKVxuICB9XG4gIC8vIHJlc29sdmUgYWxsIHByb21pc2VzXG4gIGxldCBub2RlUmVzb2x2ZWRSZXN1bHRBcnJheSA9IGF3YWl0IFByb21pc2UuYWxsKG5vZGVQcm9taXNlQXJyYXkpLmNhdGNoKGVycm9yID0+IHtcbiAgICBpZiAocHJvY2Vzcy5lbnYuU1pOX0RFQlVHID09ICd0cnVlJykgY29uc29sZS5lcnJvcihg8J+UgOKaoO+4jyBcXGBQcm9taXNlLmFsbFxcYCBmb3Igbm9kZUNvbm5lY3Rpb25BcnJheSByZWplY3RlZCBiZWNhdXNlOiAke2Vycm9yfWApXG4gICAgZWxzZSBjb25zb2xlLmxvZyhlcnJvcilcbiAgfSlcbiAgLy8gb3JkZXJlZCByZXN1bHRzIGFjY29yZGluZyB0byBwcm9taXNlIGNvbXBsZXRpb24uXG4gIHJldHVybiByZXNvbHZlZE9yZGVyZWROb2RlUmVzb2x2ZWRSZXN1bHQgLy8gcmV0dXJuIGZvciBhbGwgcmVzb2x2ZWQgcmVzdWx0c1xuXG4gIC8vIFByZXNlcnZlcyB0aGUgb3JkZXIgb2Ygbm9kZXMgb3JpZ2luYWwgaW4gY29ubmVjdGlvbiBhcnJheSwgaS5lLiBkb2VzIG5vdCBvcmRlciB0aGUgbm9kZSByZXN1bHRzIGFjY29yZGluZyB0byB0aGUgZXhlY3V0aW9uIGNvbXBsZXRpb24sIHJhdGhlciBhY2NvcmRpbmcgdG8gdGhlIGZpcnN0IHZpc2l0ZWQgZHVyaW5nIHRyYXZlcnNhbC5cbiAgLy8gZm9yIChsZXQgbmV4dFJlc3VsdCBvZiBub2RlUmVzb2x2ZWRSZXN1bHRBcnJheSkge1xuICAvLyAgIGVtaXQobmV4dFJlc3VsdClcbiAgLy8gfVxufVxuXG4vKipcbiAqIFNlcXVlbnRpYWwgbm9kZSBleGVjdXRpb24gLSBhd2FpdCBlYWNoIG5vZGUgdGlsbCBpdCBmaW5pc2hlcyBleGVjdXRpb24uXG4gKiovXG5leHBvcnQgYXN5bmMgZnVuY3Rpb24qIGNocm9ub2xvZ2ljYWwoeyBub2RlSXRlcmF0b3JGZWVkLCBlbWl0IH0pIHtcbiAgbGV0IG5vZGVSZXN1bHRMaXN0ID0gW11cbiAgZm9yIGF3YWl0IChsZXQgbm9kZURhdGEgb2Ygbm9kZUl0ZXJhdG9yRmVlZCkge1xuICAgIHlpZWxkIHsgbm9kZTogbm9kZURhdGEgfVxuICAgIGxldCB7IHByb21pc2UgfSA9IGZ1bmN0aW9uLnNlbnRcbiAgICBsZXQgbmV4dFJlc3VsdCA9IGF3YWl0IHByb21pc2VcbiAgICBlbWl0KG5leHRSZXN1bHQpIC8vIGVtaXQgZm9yIGltbWVkaWF0ZSBjb25zdW1wdGlvblxuICAgIG5vZGVSZXN1bHRMaXN0LnB1c2gobmV4dFJlc3VsdClcbiAgfVxuICByZXR1cm4gbm9kZVJlc3VsdExpc3Rcbn1cblxuLy8gaW1wbGVtZW50YXRpb24gdXNpbmcgd2hpbGUgbG9vcCBpbnN0ZWFkIG9mIGBmb3IgYXdhaXRgLCBhcyBpdCBhbGxvd3MgZm9yIHBhc3NpbmcgaW5pdGlhbCBjb25maWcgdmFsdWUgZm9yIHRoZSBnZW5lcmF0b3IgZnVuY3Rpb24gKHRoYXQgd2lsbCB1c2UgZnVuY3Rpb24uc2VudCB0byBjYXRjaCBpdC4pXG5leHBvcnQgYXN5bmMgZnVuY3Rpb24qIGNocm9ub2xvZ2ljYWxfaW1wbGVtZW50YXRpb25Vc2luZ1doaWxlTG9vcCh7IG5vZGVJdGVyYXRvckZlZWQsIGVtaXQgfSkge1xuICBsZXQgbm9kZVJlc3VsdExpc3QgPSBbXVxuICBsZXQgZyA9IHsgaXRlcmF0b3I6IG5vZGVJdGVyYXRvckZlZWQgfVxuICBnLnJlc3VsdCA9IGF3YWl0IGcuaXRlcmF0b3IubmV4dCgpIC8vIGluaXRpYWxpemUgZ2VuZXJhdG9yIGZ1bmN0aW9uIGV4ZWN1dGlvbiBhbmQgcGFzcyBleGVjdXRpb24gY29uZmlndXJhdGlvbnMuXG4gIHdoaWxlICghZy5yZXN1bHQuZG9uZSkge1xuICAgIGxldCBub2RlRGF0YSA9IGcucmVzdWx0LnZhbHVlXG4gICAgeWllbGQgeyBub2RlOiBub2RlRGF0YSB9XG4gICAgbGV0IHsgcHJvbWlzZSB9ID0gZnVuY3Rpb24uc2VudFxuICAgIGxldCBuZXh0UmVzdWx0ID0gYXdhaXQgcHJvbWlzZVxuICAgIGVtaXQobmV4dFJlc3VsdCkgLy8gZW1pdCBmb3IgaW1tZWRpYXRlIGNvbnN1bXB0aW9uXG4gICAgbm9kZVJlc3VsdExpc3QucHVzaChuZXh0UmVzdWx0KVxuICAgIGcucmVzdWx0ID0gYXdhaXQgZy5pdGVyYXRvci5uZXh0KClcbiAgfVxuICByZXR1cm4gbm9kZVJlc3VsdExpc3Rcbn1cbiJdfQ==
