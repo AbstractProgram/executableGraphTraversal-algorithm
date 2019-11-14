@@ -4,21 +4,20 @@ import { simpleMemoryModelAdapterFunction } from './databaseImplementation/simpl
 import { redisModelAdapterFunction } from './databaseImplementation/redisGraphModelAdapter.js'
 // add all exported functions as implementations.
 import * as aggregator from './traversalImplementation/aggregator.js'
-import * as processData from './traversalImplementation/processData.js'
-import * as handlePropagation from './traversalImplementation/handlePropagation.js'
+import * as processNode from './traversalImplementation/processNode.js'
+import * as portNode from './traversalImplementation/portNode.js'
 import * as traverseNode from './traversalImplementation/traverseNode.js'
 import * as traversalInterception from './traversalImplementation/traversalInterception.js'
 
-export const  traversal = {
-  traverseNode: traverseNode,
-  handlePropagation: handlePropagation, // Port
+export const traversal = {
   traversalInterception: traversalInterception, // Stage
   aggregator: aggregator,
-  processData: processData, // Process
+  portNode: portNode,
+  processNode: processNode,
 }
 
-export const  database = {
+export const database = {
   redisModelAdapterFunction,
   simpleMemoryModelAdapterFunction,
-  boltCypherModelAdapterFunction
+  boltCypherModelAdapterFunction,
 }
