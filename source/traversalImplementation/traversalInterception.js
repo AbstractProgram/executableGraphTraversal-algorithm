@@ -1,27 +1,6 @@
 import assert from 'assert'
 
 // visiting each node before visiting it's child nodes.
-// The middlewares that follow the Koa specification use next to call one another. In this case the nextFunction will be used instead, in which it controlls the propagation of nested traversal nodes.
-export const handleMiddlewareNextCall = targetFunction =>
-  new Proxy(targetFunction, {
-    async apply(target, thisArg, argArray) {
-      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator } = argArray[0]
-      let nextCalled = false
-      // A next function that will be used to compose in a sense the middlewares that are being executed during traversal. As middlewares relies on `next` function to chain the events.
-      const nextFunction = async () => {
-        nextCalled = true
-        let traversalResultIterator = await Reflect.apply(...arguments)
-        for await (let traversalResult of traversalResultIterator) aggregator.merge(traversalResult.result)
-      }
-
-      let result = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: { nextFunction } })
-      if (!nextCalled) await nextFunction() // in some cases the data process returns without calling nextFunction (when it is a regular node, not a process intending to execute a middleware).
-
-      return traversalDepth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
-    },
-  })
-
-// visiting each node before visiting it's child nodes.
 export const processThenTraverse = targetFunction =>
   new Proxy(targetFunction, {
     async apply(target, thisArg, argArray) {
@@ -32,8 +11,8 @@ export const processThenTraverse = targetFunction =>
 
       let result = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
 
-      let traversalResultIterator = await Reflect.apply(...arguments)
-      for await (let traversalResult of traversalResultIterator) aggregator.merge(traversalResult.result)
+      let traversalIterator = await Reflect.apply(...arguments)
+      for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
 
       return traversalDepth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
     },
@@ -48,10 +27,31 @@ export const traverseThenProcess = targetFunction =>
         // console.log(data.value, ' resolved.')
       })
 
-      let traversalResultIterator = await Reflect.apply(...arguments)
-      for await (let traversalResult of traversalResultIterator) aggregator.merge(traversalResult.result)
+      let traversalIterator = await Reflect.apply(...arguments)
+      for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
 
       let result = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
+
+      return traversalDepth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
+    },
+  })
+
+// visiting each node before visiting it's child nodes.
+// The middlewares that follow the Koa specification use next to call one another. In this case the nextFunction will be used instead, in which it controlls the propagation of nested traversal nodes.
+export const handleMiddlewareNextCall = targetFunction =>
+  new Proxy(targetFunction, {
+    async apply(target, thisArg, argArray) {
+      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator } = argArray[0]
+      let nextCalled = false
+      // A next function that will be used to compose in a sense the middlewares that are being executed during traversal. As middlewares relies on `next` function to chain the events.
+      const nextFunction = async () => {
+        nextCalled = true
+        let traversalIterator = await Reflect.apply(...arguments)
+        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+      }
+
+      let result = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: { nextFunction } })
+      if (!nextCalled) await nextFunction() // in some cases the data process returns without calling nextFunction (when it is a regular node, not a process intending to execute a middleware).
 
       return traversalDepth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
     },
@@ -66,13 +66,13 @@ export const traverseThenProcessWithLogicalOperator = targetFunction =>
         // console.log(data.value, ' resolved.')
       })
 
-      let traversalResultIterator = await Reflect.apply(...arguments)
-      for await (let traversalResult of traversalResultIterator) {
-        let relatedPort = traversalResult.config.port
+      let traversalIterator = await Reflect.apply(...arguments)
+      for await (let traversal of traversalIterator) {
+        let relatedPort = traversal.group.config.portNode
         assert(relatedPort.properties.logicalOperator, `• port (key="${relatedPort.properties.key}") must have "logicalOperator" property assigned, to aggregate results.`)
         // conditional comparison type to use for resolving boolean results.
         let logicalOperator = relatedPort.properties.logicalOperator
-        aggregator.merge(traversalResult.result, undefined, logicalOperator)
+        aggregator.merge(traversal.group.result, undefined, logicalOperator)
       }
 
       let result = await processDataCallback({ nextProcessData: aggregator.calculatedLogicalOperaion, additionalParameter: {} })
