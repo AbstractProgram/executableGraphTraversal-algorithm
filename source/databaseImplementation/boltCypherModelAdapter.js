@@ -29,6 +29,20 @@ const jsonToCepherAdapter = {
   },
 }
 
+let identityNumber = -1 // this is just used to create ids that could not conflict with currently existing ids.
+function createEdgeData({ startId, endId, type }) {
+  identityNumber--
+  return {
+    identity: identityNumber,
+    start: startId,
+    end: endId,
+    type,
+    properties: {
+      key: generateUUID(),
+    },
+  }
+}
+
 export function boltCypherModelAdapterFunction({ schemeReference, url = { protocol: 'bolt', hostname: 'localhost', port: 7687 }, authentication = { username: 'neo4j', password: 'test' } } = {}) {
   assert(schemeReference, `• schemeReference must be passed to initialize the model adapter.`)
   const graphDBDriver = boltProtocolDriver.driver(`${url.protocol}://${url.hostname}:${url.port}`, boltProtocolDriver.auth.basic(authentication.username, authentication.password), {
@@ -43,18 +57,19 @@ export function boltCypherModelAdapterFunction({ schemeReference, url = { protoc
 
   const implementation = {
     driverInstance: graphDBDriver, // expose driver instance
-    // load nodes and connections from json file data.
-    async loadGraphData({ nodeEntryData = [], connectionEntryData = [] } = {}) {
+
+    // This is kept for future reference only:
+    async replaceNodeWithAnother_loadGraphData({ nodeEntryData = [], connectionEntryData = [] } = {}) {
       // deal with `NodeReference`
       let referenceNodeArray = nodeEntryData.filter(node => node.labels.includes(schemeReference.nodeLabel.nodeReference)) // extract `NodeReference` nodes
       nodeEntryData = nodeEntryData.filter(node => !referenceNodeArray.some(i => i == node)) // remove reference nodes from node array.
-      let referenceNodeMap = new Map()
+      let rerouteNodeMap = new Map()
       let reintroduceNodeArray = []
       for (let referenceNode of referenceNodeArray) {
         let actualTargetNode = await implementation.getNodeByKey({ key: referenceNode.properties.key, shouldThrow: false })
         // <reference id>: <actual id in graph>
         if (actualTargetNode) {
-          referenceNodeMap.set(referenceNode.identity, actualTargetNode)
+          rerouteNodeMap.set(referenceNode.identity, actualTargetNode)
           console.log(`• Found "NodeReference" target in current graph ${referenceNode.identity} -> ${actualTargetNode.identity}`)
         } else {
           // if reference node key was not found in the current graph data, reintroduce it as a NodeReference node
@@ -68,14 +83,14 @@ export function boltCypherModelAdapterFunction({ schemeReference, url = { protoc
       }
       // replace node reference with actual graph identity of the target reference node
       for (let edge of connectionEntryData) {
-        if (referenceNodeMap.get(edge.start)) {
-          let actualReferenceNode = referenceNodeMap.get(edge.start)
+        if (rerouteNodeMap.get(edge.start)) {
+          let actualReferenceNode = rerouteNodeMap.get(edge.start)
           edge.start = actualReferenceNode.identity
           // add connection keys for actual reference nodes that the latter function rely on.
           edge.startKey = actualReferenceNode.properties.key
         }
-        if (referenceNodeMap.get(edge.end)) {
-          let actualReferenceNode = referenceNodeMap.get(edge.end)
+        if (rerouteNodeMap.get(edge.end)) {
+          let actualReferenceNode = rerouteNodeMap.get(edge.end)
           edge.end = actualReferenceNode.identity
           // add connection keys for actual reference nodes that the latter function rely on.
           edge.endKey = actualReferenceNode.properties.key
@@ -89,9 +104,57 @@ export function boltCypherModelAdapterFunction({ schemeReference, url = { protoc
       }
 
       // add reference target nodes to the list of nodes for usage in `addConnection function
-      let actualReferenceNodeArray = Array.from(referenceNodeMap.values())
+      let actualReferenceNodeArray = Array.from(rerouteNodeMap.values())
       for (let actualReferenceNode of actualReferenceNodeArray) {
         idMap.nodeIdentity.set(actualReferenceNode.identity, actualReferenceNode.identity)
+      }
+
+      // rely on `key` property to create connections
+      connectionEntryData.map(connection => {
+        if (!connection.startKey) connection.startKey = nodeEntryData.filter(node => node.identity == connection.start)[0].properties.key
+        if (!connection.endKey) connection.endKey = nodeEntryData.filter(node => node.identity == connection.end)[0].properties.key
+      })
+      for (let entry of connectionEntryData) {
+        await implementation.addConnection({ connectionData: entry, idMap })
+      }
+    },
+
+    async dealWithExternalReference({ nodeEntryData, connectionEntryData }) {
+      // deal with External Reroute / NodeReference
+      let externalRerouteNodeArray = nodeEntryData
+        .filter(node => node.labels.includes(schemeReference.nodeLabel.reroute)) // extract Reroute/NodeReference nodes
+        .filter(rerouteNode => rerouteNode.properties[schemeReference.rerouteProperty.externalReferenceNodeKey]) // only external reroute nodes (with an external key property)
+
+      let rerouteNodeMap = new Map()
+      for (let rerouteNode of externalRerouteNodeArray) {
+        let externalKey = rerouteNode.properties[schemeReference.rerouteProperty.externalReferenceNodeKey]
+        let actualTargetNode = await implementation.getNodeByKey({ key: externalKey, shouldThrow: false })
+        // <reference id>: <actual id in graph>
+        if (actualTargetNode) {
+          rerouteNodeMap.set(rerouteNode, actualTargetNode)
+          console.log(`• Found external reference target node in current graph ${rerouteNode.identity} -> ${actualTargetNode.identity}`)
+        } else {
+          // Warn if no reroute nodes where resolved: if reference node key was not found in the current graph data, reintroduce it as a NodeReference node
+          console.log(`• External reference node ("${externalKey}") was not found in current graph for reroute node - ${rerouteNode.properties.key}.`)
+        }
+      }
+
+      rerouteNodeMap.forEach((value, key) => {
+        // create REFERENCE edge between reroute node and the actual external graph target reference node
+        let referenceEdge = createEdgeData({ startId: rerouteNode.identity, endId: actualTargetNode.identity, type: schemeReference.connectionType.reference })
+        connectionEntryData.push(referenceEdge)
+      })
+    },
+
+    // load nodes and connections from json file data.
+    // TODO: check if this method should be placed in core as it relies on node reference / external reroute concept
+    async loadGraphData({ nodeEntryData = [], connectionEntryData = [] } = {}) {
+      await implementation.dealWithExternalReference({ nodeEntryData, connectionEntryData }) // modifies node & connection arrays
+
+      const idMap = { nodeIdentity: new Map() /** maps old graph data ids to new data ids. (as ids cannot be set in the database when loaded the graph data.) */ }
+      for (let entry of nodeEntryData) {
+        let createdNode = await implementation.addNode({ nodeData: entry })
+        idMap.nodeIdentity.set(entry.identity, createdNode.identity) // <loaded parameter ID>: <new database ID>
       }
 
       // rely on `key` property to create connections
