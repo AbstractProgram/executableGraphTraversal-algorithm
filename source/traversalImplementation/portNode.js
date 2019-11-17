@@ -12,14 +12,15 @@ export async function* propagationControl({ forkEdge, additionalChildNode, graph
 }
 
 /**
+ * TODO:
  * Selective implementation - where a switch is used to pick the next node from many, by comparing a value to case values.
  **/
-export async function* selectivePropagation({ forkEdge, additionalChildNode, graphInstance }) {
-  let portNode = forkEdge.destination
-  console.log(portNode.properties.key)
-  let nodeIteratorFeed = await iterateNext({ node: forkEdge.destination, additionalChildNode, graphInstance })
-  yield* nodeIteratorFeed
-}
+// export async function* selectivePropagation({ forkEdge, additionalChildNode, graphInstance }) {
+//   let portNode = forkEdge.destination
+//   console.log(portNode.properties.key)
+//   let nodeIteratorFeed = await iterateNext({ node: forkEdge.destination, additionalChildNode, graphInstance })
+//   yield* nodeIteratorFeed
+// }
 
 /**
  * Loops through node connection to traverse the connected nodes' graphs

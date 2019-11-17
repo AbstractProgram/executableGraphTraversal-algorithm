@@ -124,8 +124,11 @@ export async function executeScriptSpawn({ stageNode, processNode, graphInstance
   | |   / _ \| '_ \ / _` | | __| |/ _ \| '_ \ 
   | |__| (_) | | | | (_| | | |_| | (_) | | | |
    \____\___/|_| |_|\__,_|_|\__|_|\___/|_| |_|
+   Selective / Conditional
 */
-
+/**
+ * @return {Node Object} - a node object containing data.
+ */
 export async function switchCase({ stageNode, processNode, graphInstance, nextProcessData }, { additionalParameter, traverseCallContext }) {
   const { caseArray, default: defaultRelationship } = await graphInstance.databaseWrapper.getSwitchElement({ concreteDatabase: graphInstance.database, nodeID: processNode.identity })
   const value = await graphInstance.databaseWrapper.getTargetValue({ concreteDatabase: graphInstance.database, nodeID: processNode.identity })
