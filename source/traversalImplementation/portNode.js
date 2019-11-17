@@ -1,11 +1,10 @@
-import promiseProperRace from '@dependency/promiseProperRace'
 import { resolve } from 'path'
 // import { iterateConnection } from './iterateConnection.js'
 
 /**  The purpose of this function is to find & yield next nodes.
  * @yields {Object { node: <node instance>} } a traversal configuration feed/iterato
  **/
-export async function* propagationControl({ forkEdge, additionalChildNode, graphInstance }) {
+export async function* propagationControl({ forkEdge, getImplementation, additionalChildNode, graphInstance }) {
   let portNode = forkEdge.destination
   let nodeIteratorFeed = await iterateNext({ node: forkEdge.destination, additionalChildNode, graphInstance })
   yield* nodeIteratorFeed
