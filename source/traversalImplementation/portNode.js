@@ -11,15 +11,10 @@ export async function* propagationControl({ forkEdge, getImplementation, additio
 }
 
 /**
- * TODO:
+ * TODO: check if this implementation is needed after reroute node with returnedValue Reference edge implementation was implemented.
  * Selective implementation - where a switch is used to pick the next node from many, by comparing a value to case values.
  **/
-// export async function* selectivePropagation({ forkEdge, additionalChildNode, graphInstance }) {
-//   let portNode = forkEdge.destination
-//   console.log(portNode.properties.key)
-//   let nodeIteratorFeed = await iterateNext({ node: forkEdge.destination, additionalChildNode, graphInstance })
-//   yield* nodeIteratorFeed
-// }
+// export async function* selectivePropagation({ forkEdge, additionalChildNode, graphInstance }) {}
 
 /**
  * Loops through node connection to traverse the connected nodes' graphs
