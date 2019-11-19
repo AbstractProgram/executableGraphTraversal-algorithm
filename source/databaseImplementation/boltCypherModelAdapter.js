@@ -169,9 +169,10 @@ export function boltCypherModelAdapterFunction({ schemeReference, url = { protoc
     addNode: async ({ nodeData /*conforms with the Cypher query results data convention*/ }) => {
       assert(nodeData.properties?.key, '• Node data must have a key property - ' + nodeData)
 
+      let labelSection = nodeData.labels && nodeData.labels.length > 0 ? `:${jsonToCepherAdapter.convertArrayToCepherLabel(nodeData.labels)}` : ''
       let session = await graphDBDriver.session()
       let query = `
-        create (n:${jsonToCepherAdapter.convertArrayToCepherLabel(nodeData.labels)} {${jsonToCepherAdapter.convertObjectToCepherProperty(nodeData.properties)}})
+        create (n${labelSection} {${jsonToCepherAdapter.convertObjectToCepherProperty(nodeData.properties)}})
         return n
       `
       let result = await session.run(query)
