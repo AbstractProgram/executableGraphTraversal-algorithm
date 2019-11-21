@@ -119,41 +119,6 @@ export async function executeScriptSpawn({ stageNode, processNode, graphInstance
 }
 
 /*
-    ____                _ _ _   _             
-   / ___|___  _ __   __| (_) |_(_) ___  _ __  
-  | |   / _ \| '_ \ / _` | | __| |/ _ \| '_ \ 
-  | |__| (_) | | | | (_| | | |_| | (_) | | | |
-   \____\___/|_| |_|\__,_|_|\__|_|\___/|_| |_|
-   Selective / Conditional
-*/
-/**
- * @return {Node Object} - a node object containing data.
- */
-export async function switchCase({ stageNode, processNode, graphInstance, nextProcessData }, { additionalParameter, traverseCallContext }) {
-  const { caseArray, default: defaultRelationship } = await graphInstance.databaseWrapper.getSwitchElement({ concreteDatabase: graphInstance.database, nodeID: processNode.identity })
-  const value = await graphInstance.databaseWrapper.getTargetValue({ concreteDatabase: graphInstance.database, nodeID: processNode.identity })
-
-  /* run condition check against comparison value. Hierarchy of comparison value calculation: 
-    1. VALUE relationship data.
-    2. NEXT stages result 
-  */
-  let comparisonValue
-  if (value) comparisonValue = value
-  else comparisonValue = nextProcessData
-
-  // Switch cases: return evaluation configuration
-  let chosenNode
-  if (caseArray) {
-    // compare expected value with result
-    let caseRelationship = caseArray.filter(caseRelationship => caseRelationship.connection.properties?.expected == comparisonValue)[0]
-    chosenNode = caseRelationship?.destination
-  }
-  chosenNode ||= defaultRelationship?.destination
-
-  return chosenNode || null
-}
-
-/*
    __  __ _     _     _ _                             
   |  \/  (_) __| | __| | | _____      ____ _ _ __ ___ 
   | |\/| | |/ _` |/ _` | |/ _ \ \ /\ / / _` | '__/ _ \
