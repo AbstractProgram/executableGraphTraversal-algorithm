@@ -47,7 +47,7 @@ export async function executeFunctionReference({ stageNode, processNode, graphIn
   let functionName = resource.source.properties.functionName || throw new Error(`• function resource must have a "functionName" - ${resource.source.properties.functionName}`)
   let functionCallback = referenceContext[functionName] || throw new Error(`• reference function name doesn't exist.`)
   try {
-    return await functionCallback({ node: processNode, context: graphInstance.context, traverseCallContext })
+    return await functionCallback({ node: processNode, context: graphInstance.context, graphInstance, traverseCallContext })
   } catch (error) {
     console.error(error) && process.exit()
   }
@@ -132,7 +132,7 @@ export const immediatelyExecuteMiddleware = async ({ stageNode, processNode, gra
   let contextPropertyName = 'functionReferenceContext',
     referenceContext = graphInstance.context[contextPropertyName]
   assert(referenceContext, `• Context "${contextPropertyName}" variable is required to reference functions from graph database strings.`)
-  assert(graphInstance.middlewareParameter?.context, `• Middleware graph traversal relies on graphInstance.middlewareParameter.context`)
+  assert(graphInstance.context.middlewareParameter?.context, `• Middleware graph traversal relies on context.middlewareParameter.context on the graph context instance`)
 
   let resource
   const { resourceArray } = await graphInstance.databaseWrapper.getResource({ concreteDatabase: graphInstance.database, nodeID: processNode.identity })
@@ -146,7 +146,7 @@ export const immediatelyExecuteMiddleware = async ({ stageNode, processNode, gra
   let functionCallback = referenceContext[functionName] || throw new Error(`• reference function name doesn't exist.`)
   try {
     let middleware = await functionCallback({ node: processNode }) // exprected to return a Koa middleware complying function.
-    let context = graphInstance.middlewareParameter.context,
+    let context = graphInstance.context.middlewareParameter.context,
       next = nextFunction
     await middleware(context, next) // execute middleware
     return middleware // allow to aggregate middleware function for debugging purposes.
