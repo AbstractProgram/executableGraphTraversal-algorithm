@@ -45,7 +45,7 @@ export async function executeFunctionReference({ stageNode, processNode, graphIn
 
   assert(resource.source.labels.includes(graphInstance.schemeReference.nodeLabel.function), `• Unsupported Node type for resource connection.`)
   let functionName = resource.source.properties.functionName || throw new Error(`• function resource must have a "functionName" - ${resource.source.properties.functionName}`)
-  let functionCallback = referenceContext[functionName] || throw new Error(`• reference function name doesn't exist.`)
+  let functionCallback = referenceContext[functionName] || throw new Error(`• reference function name "${functionName}" doesn't exist.`)
   try {
     return await functionCallback({ node: processNode, context: graphInstance.context, graphInstance, traverseCallContext })
   } catch (error) {
@@ -143,7 +143,7 @@ export const immediatelyExecuteMiddleware = async ({ stageNode, processNode, gra
   assert(resource.source.labels.includes(graphInstance.schemeReference.nodeLabel.function), `• Unsupported Node type for resource connection.`)
   let functionName = resource.source.properties.functionName || throw new Error(`• function resource must have a "functionName" - ${resource.source.properties.functionName}`)
   // a function that complies with graphTraversal processData implementation.
-  let functionCallback = referenceContext[functionName] || throw new Error(`• reference function name doesn't exist.`)
+  let functionCallback = referenceContext[functionName] || throw new Error(`• reference function name "${functionName}" doesn't exist.`)
   try {
     let middleware = await functionCallback({ node: processNode }) // exprected to return a Koa middleware complying function.
     let context = graphInstance.context.middlewareParameter.context,
