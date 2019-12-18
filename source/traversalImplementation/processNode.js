@@ -156,14 +156,6 @@ export const immediatelyExecuteMiddleware = async ({ stageNode, processNode, gra
 }
 
 /*
-   ____  _____ ____  ____  _____ ____    _  _____ _____ ____  
-  |  _ \| ____|  _ \|  _ \| ____/ ___|  / \|_   _| ____|  _ \ 
-  | | | |  _| | |_) | |_) |  _|| |     / _ \ | | |  _| | | | |
-  | |_| | |___|  __/|  _ <| |__| |___ / ___ \| | | |___| |_| |
-  |____/|_____|_|   |_| \_\_____\____/_/   \_\_| |_____|____/ 
-  Requires refactoring and migration 
-*/
-/*
    _____                    _       _       
   |_   _|__ _ __ ___  _ __ | | __ _| |_ ___ 
     | |/ _ \ '_ ` _ \| '_ \| |/ _` | __/ _ \
@@ -173,78 +165,48 @@ export const immediatelyExecuteMiddleware = async ({ stageNode, processNode, gra
 */
 
 /**
- *
  * @return {String} String of rendered HTML document content.
+ Underscore templating options - https://2ality.com/2012/06/underscore-templates.html
+
+  1. traverse nested
+  2. aggregate into nested arrays (by insertion position keys).
+  3. render current node template with insetion position content.
+  4. 
+
+  Server-side template system (run-time substitution happens on the web server): 
+    - Template resource: template file with insertion points.
+    - Content resource (template parts): Argumnets passed to the parsed template function. 
+    - Template engine/processing/rendening element/module: underscore.template 
+
+  server-side javascript that is located in the templates, is executed. Rendering template requires an object of functions for each insetion position key.
+  Where:
+    - insert object functions are called and expect to return a string. Functions represent- the algorithms used to deal with content value and add it to the document in a specific position,
+      which will receive the parameters that can change it's behavior. Using a function allows for creating specific logic for each insetion point.
+    - Each insertion position is distinguished by the keys of the insert object. 
+    - Content value (String | Array | Object) - which insert function is initialized with, and handles it. 
+
+  // TODO: deal with post rendering processing algorithms, when required.
+  // TODO: deal with wrapping layouts e.g. layoutElement: 'webapp-layout-list'
  */
-async function initializeNestedUnit({ nestedUnitKey, additionalChildNestedUnit = [], pathPointerKey = null }) {
-  // views argument that will be initiallized inside templates:
-  // loop through template and create rendered view content.
-  let view = await nestedUnitInstance.loopInsertionPoint({ type: 'aggregateIntoTemplateObject' })
-
-  assert(this.portAppInstance.config.clientSidePath, "• clientSidePath cannot be undefined. i.e. previous middlewares should've set it")
-  let templatePath = path.join(this.portAppInstance.config.clientSidePath, unitInstance.file.filePath)
-  let renderedContent
-  switch (unitInstance.processDataImplementation) {
-    default:
-    case 'underscoreRendering':
-      renderedContent = await this.underscoreRendering({ templatePath, view })
-      break
-  }
-
-  switch (unitInstance.processRenderedContent) {
-    case 'wrapJsTag':
-      renderedContent = `<script type="module" async>${renderedContent}</script>`
-      break
-    default: // skip
-  }
+export const templateRenderingWithInseritonPosition = async ({ stageNode, processNode, graphInstance, nextProcessData }, { additionalParameter, traverseCallContext }) => {
+  let context = graphInstance.context.middlewareParameter.context
+  assert(context.clientSidePath, "• clientSidePath cannot be undefined. i.e. previous middlewares should've set it")
+  let templatePath = path.join(context.clientSidePath, node.filePath)
 
   return renderedContent
-}
-
-async function underscoreRendering({ templatePath, view }) {
-  // Load template file.
-  let templateString = await filesystem.readFileSync(templatePath, 'utf-8')
-  // Shared arguments between all templates being rendered
-  const templateArgument = {
-    templateController: this,
-    context: this.portAppInstance.context,
-    Application,
-    argument: {},
-  }
-  let renderedContent = underscore.template(templateString)(
-    Object.assign(
-      {},
-      templateArgument, // use templateArgument in current template
-      { view, templateArgument }, // pass templateArgument to nested templates
-    ),
-  )
-  return renderedContent
-}
-
-function renderedContentString(viewName, viewObject) {
-  // loop throught the strings array to combine them and print string code to the file.
-  if (viewObject[viewName] && Array.isArray(viewObject[viewName])) {
-    return viewObject[viewName].join('') // joins all array components into one string.
-  }
-}
-
-let traversePort = async function aggregateIntoTemplateObject() {
-  let view = {}
-  if (this.insertionPoint) {
-    for (let insertionPoint of this.insertionPoint) {
-      let children = await this.filterAndOrderChildren({ insertionPointKey: insertionPoint.key })
-      let subsequent = await this.initializeInsertionPoint({ insertionPoint, children })
-      if (!(insertionPoint.name in view)) view[insertionPoint.name] = []
-      Array.prototype.push.apply(view[insertionPoint.name], subsequent)
-    }
-  }
-  return view
 }
 
 /*
- 
-TODO: as there`z is an API Schema, a database schema can make content extremely dynamic. -Database schema is different from API Schema.         
+   ____  _____ ____  ____  _____ ____    _  _____ _____ ____  
+  |  _ \| ____|  _ \|  _ \| ____/ ___|  / \|_   _| ____|  _ \ 
+  | | | |  _| | |_) | |_) |  _|| |     / _ \ | | |  _| | | | |
+  | |_| | |___|  __/|  _ <| |__| |___ / ___ \| | | |___| |_| |
+  |____/|_____|_|   |_| \_\_____\____/_/   \_\_| |_____|____/ 
+  Requires refactoring and migration 
+*/
 
+/*
+TODO: as there`z is an API Schema, a database schema can make content extremely dynamic. -Database schema is different from API Schema.         
 
    ___  ___| |__   ___ _ __ ___   __ _ 
   / __|/ __| '_ \ / _ \ '_ ` _ \ / _` |

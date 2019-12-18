@@ -21,14 +21,6 @@ export class AggregatorArray {
   }
 }
 
-export class ConditionCheck {
-  value: Boolean
-  constructor(initialValue) {
-    this.value = initialValue || true // assume true till check fails.
-    return this
-  }
-}
-
 // Conditions aggregator
 export class ConditionAggregator {
   processResultArray: Array
@@ -67,3 +59,23 @@ export class ConditionAggregator {
     }
   }
 }
+
+// TODO: Aggregate for each node by insertion position - nested array aggregation
+// export class AggregatorObjectOfArray {
+//   value: Object
+//   constructor(initialValue: Object) {
+//     this.value = initialValue || {}
+//     return this
+//   }
+//   // add item to aggregator
+//   add(item, aggregator = this) {
+//     if (item) aggregator.value.push(item)
+//   }
+//   // merge aggregators
+//   merge(additionalAggregatorArray: [Aggregator], targetAggregator: Aggregator = this) {
+//     for (let additionalAggregator of additionalAggregatorArray) {
+//       targetAggregator.value = [...targetAggregator.value, ...additionalAggregator.value]
+//     }
+//     return targetAggregator
+//   }
+// }
