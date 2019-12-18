@@ -4,15 +4,21 @@ import assert from 'assert'
 export const processThenTraverse = targetFunction =>
   new Proxy(targetFunction, {
     async apply(target, thisArg, argArray) {
-      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator } = argArray[0]
+      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator, traversalConfig } = argArray[0]
+
       eventEmitter.on('nodeTraversalCompleted', data => {
         // console.log(data.value, ' resolved.')
       })
 
-      let result = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
+      if (traversalConfig.shouldExecuteProcess()) {
+        let processResult = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
+        if (traversalConfig.shouldIncludeResult()) aggregator.add(processResult)
+      }
 
-      let traversalIterator = await Reflect.apply(...arguments)
-      for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+      if (traversalConfig.shouldContinue()) {
+        let traversalIterator = await Reflect.apply(...arguments)
+        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+      }
 
       return traversalDepth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
     },
@@ -22,15 +28,20 @@ export const processThenTraverse = targetFunction =>
 export const traverseThenProcess = targetFunction =>
   new Proxy(targetFunction, {
     async apply(target, thisArg, argArray) {
-      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator } = argArray[0]
+      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator, traversalConfig } = argArray[0]
       eventEmitter.on('nodeTraversalCompleted', data => {
         // console.log(data.value, ' resolved.')
       })
 
-      let traversalIterator = await Reflect.apply(...arguments)
-      for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+      if (traversalConfig.shouldContinue()) {
+        let traversalIterator = await Reflect.apply(...arguments)
+        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+      }
 
-      let result = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
+      if (traversalConfig.shouldExecuteProcess()) {
+        let processResult = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
+        if (traversalConfig.shouldIncludeResult()) aggregator.add(processResult)
+      }
 
       return traversalDepth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
     },
@@ -41,16 +52,22 @@ export const traverseThenProcess = targetFunction =>
 export const handleMiddlewareNextCall = targetFunction =>
   new Proxy(targetFunction, {
     async apply(target, thisArg, argArray) {
-      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator } = argArray[0]
+      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator, traversalConfig } = argArray[0]
       let nextCalled = false
       // A next function that will be used to compose in a sense the middlewares that are being executed during traversal. As middlewares relies on `next` function to chain the events.
       const nextFunction = async () => {
         nextCalled = true
-        let traversalIterator = await Reflect.apply(...arguments)
-        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+        if (traversalConfig.shouldContinue()) {
+          let traversalIterator = await Reflect.apply(...arguments)
+          for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+        }
       }
 
-      let result = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: { nextFunction } })
+      if (traversalConfig.shouldExecuteProcess()) {
+        let processResult = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: { nextFunction } })
+        if (traversalConfig.shouldIncludeResult()) aggregator.add(processResult)
+      }
+
       if (!nextCalled) await nextFunction() // in some cases the data process returns without calling nextFunction (when it is a regular node, not a process intending to execute a middleware).
 
       return traversalDepth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
@@ -61,22 +78,30 @@ export const handleMiddlewareNextCall = targetFunction =>
 export const traverseThenProcessWithLogicalOperator = targetFunction =>
   new Proxy(targetFunction, {
     async apply(target, thisArg, argArray) {
-      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator } = argArray[0]
+      let { nodeInstance, traversalDepth, eventEmitter, processDataCallback, aggregator, traversalConfig } = argArray[0]
       eventEmitter.on('nodeTraversalCompleted', data => {
         // console.log(data.value, ' resolved.')
       })
 
-      let traversalIterator = await Reflect.apply(...arguments)
-      for await (let traversal of traversalIterator) {
-        let relatedPort = traversal.group.config.portNode
-        assert(relatedPort.properties.logicalOperator, `• port (key="${relatedPort.properties.key}") must have "logicalOperator" property assigned, to aggregate results.`)
-        // conditional comparison type to use for resolving boolean results.
-        let logicalOperator = relatedPort.properties.logicalOperator
-        aggregator.merge(traversal.group.result, undefined, logicalOperator)
+      if (traversalConfig.shouldContinue()) {
+        let traversalIterator = await Reflect.apply(...arguments)
+        for await (let traversal of traversalIterator) {
+          let relatedPort = traversal.group.config.portNode
+          assert(relatedPort.properties.logicalOperator, `• port (key="${relatedPort.properties.key}") must have "logicalOperator" property assigned, to aggregate results.`)
+          // conditional comparison type to use for resolving boolean results.
+          let logicalOperator = relatedPort.properties.logicalOperator
+          aggregator.merge(traversal.group.result, undefined, logicalOperator)
+        }
       }
 
-      let result = await processDataCallback({ nextProcessData: aggregator.calculatedLogicalOperaion, additionalParameter: {} })
+      if (traversalConfig.shouldExecuteProcess()) {
+        let processResult = await processDataCallback({ nextProcessData: aggregator.calculatedLogicalOperaion, additionalParameter: {} })
+        if (traversalConfig.shouldIncludeResult()) aggregator.add(processResult)
+      }
 
-      return traversalDepth == 0 ? [result] : aggregator // check if top level call and not an initiated nested recursive call.
+      return traversalDepth == 0 ? aggregator.processResultArray : aggregator // check if top level call and not an initiated nested recursive call.
     },
   })
+
+//TODO:
+// export const traverseThenProcessWithObjectOfArray =
