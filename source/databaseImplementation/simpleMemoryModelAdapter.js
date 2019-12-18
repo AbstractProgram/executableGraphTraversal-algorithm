@@ -1,20 +1,21 @@
-export function simpleMemoryModelAdapterFunction() {
-  // Scope internal private data structure
+"use strict";Object.defineProperty(exports, "__esModule", { value: true });exports.simpleMemoryModelAdapterFunction = simpleMemoryModelAdapterFunction;function simpleMemoryModelAdapterFunction() {
+
   const nodeArray = [],
-    connectionArray = []
+  connectionArray = [];
   return {
     getAllNode: () => nodeArray,
     getAllConnection: () => connectionArray,
-    // get query for Node document
-    getByKey: async function({ key }) {
-      let node = nodeArray.filter(value => value.key == key)[0]
-      if (!node) throw new Error(`• node key "${key}" not found in array.`)
-      return node
+
+    getByKey: async function ({ key }) {
+      let node = nodeArray.filter(value => value.key == key)[0];
+      if (!node) throw new Error(`• node key "${key}" not found in array.`);
+      return node;
     },
-    getConnectionByKey: async function({ key }) {
-      let connection = connectionArray.filter(value => value.key == key)[0]
-      if (!connection) throw new Error(`• connection key "${key}" not found in array.`)
-      return connection
-    },
-  }
+    getConnectionByKey: async function ({ key }) {
+      let connection = connectionArray.filter(value => value.key == key)[0];
+      if (!connection) throw new Error(`• connection key "${key}" not found in array.`);
+      return connection;
+    } };
+
 }
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NvdXJjZS9kYXRhYmFzZUltcGxlbWVudGF0aW9uL3NpbXBsZU1lbW9yeU1vZGVsQWRhcHRlci5qcyJdLCJuYW1lcyI6WyJzaW1wbGVNZW1vcnlNb2RlbEFkYXB0ZXJGdW5jdGlvbiIsIm5vZGVBcnJheSIsImNvbm5lY3Rpb25BcnJheSIsImdldEFsbE5vZGUiLCJnZXRBbGxDb25uZWN0aW9uIiwiZ2V0QnlLZXkiLCJrZXkiLCJub2RlIiwiZmlsdGVyIiwidmFsdWUiLCJFcnJvciIsImdldENvbm5lY3Rpb25CeUtleSIsImNvbm5lY3Rpb24iXSwibWFwcGluZ3MiOiJ1SkFBTyxTQUFTQSxnQ0FBVCxHQUE0Qzs7QUFFakQsUUFBTUMsU0FBUyxHQUFHLEVBQWxCO0FBQ0VDLEVBQUFBLGVBQWUsR0FBRyxFQURwQjtBQUVBLFNBQU87QUFDTEMsSUFBQUEsVUFBVSxFQUFFLE1BQU1GLFNBRGI7QUFFTEcsSUFBQUEsZ0JBQWdCLEVBQUUsTUFBTUYsZUFGbkI7O0FBSUxHLElBQUFBLFFBQVEsRUFBRSxnQkFBZSxFQUFFQyxHQUFGLEVBQWYsRUFBd0I7QUFDaEMsVUFBSUMsSUFBSSxHQUFHTixTQUFTLENBQUNPLE1BQVYsQ0FBaUJDLEtBQUssSUFBSUEsS0FBSyxDQUFDSCxHQUFOLElBQWFBLEdBQXZDLEVBQTRDLENBQTVDLENBQVg7QUFDQSxVQUFJLENBQUNDLElBQUwsRUFBVyxNQUFNLElBQUlHLEtBQUosQ0FBVyxlQUFjSixHQUFJLHVCQUE3QixDQUFOO0FBQ1gsYUFBT0MsSUFBUDtBQUNELEtBUkk7QUFTTEksSUFBQUEsa0JBQWtCLEVBQUUsZ0JBQWUsRUFBRUwsR0FBRixFQUFmLEVBQXdCO0FBQzFDLFVBQUlNLFVBQVUsR0FBR1YsZUFBZSxDQUFDTSxNQUFoQixDQUF1QkMsS0FBSyxJQUFJQSxLQUFLLENBQUNILEdBQU4sSUFBYUEsR0FBN0MsRUFBa0QsQ0FBbEQsQ0FBakI7QUFDQSxVQUFJLENBQUNNLFVBQUwsRUFBaUIsTUFBTSxJQUFJRixLQUFKLENBQVcscUJBQW9CSixHQUFJLHVCQUFuQyxDQUFOO0FBQ2pCLGFBQU9NLFVBQVA7QUFDRCxLQWJJLEVBQVA7O0FBZUQiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZnVuY3Rpb24gc2ltcGxlTWVtb3J5TW9kZWxBZGFwdGVyRnVuY3Rpb24oKSB7XHJcbiAgLy8gU2NvcGUgaW50ZXJuYWwgcHJpdmF0ZSBkYXRhIHN0cnVjdHVyZVxyXG4gIGNvbnN0IG5vZGVBcnJheSA9IFtdLFxyXG4gICAgY29ubmVjdGlvbkFycmF5ID0gW11cclxuICByZXR1cm4ge1xyXG4gICAgZ2V0QWxsTm9kZTogKCkgPT4gbm9kZUFycmF5LFxyXG4gICAgZ2V0QWxsQ29ubmVjdGlvbjogKCkgPT4gY29ubmVjdGlvbkFycmF5LFxyXG4gICAgLy8gZ2V0IHF1ZXJ5IGZvciBOb2RlIGRvY3VtZW50XHJcbiAgICBnZXRCeUtleTogYXN5bmMgZnVuY3Rpb24oeyBrZXkgfSkge1xyXG4gICAgICBsZXQgbm9kZSA9IG5vZGVBcnJheS5maWx0ZXIodmFsdWUgPT4gdmFsdWUua2V5ID09IGtleSlbMF1cclxuICAgICAgaWYgKCFub2RlKSB0aHJvdyBuZXcgRXJyb3IoYOKAoiBub2RlIGtleSBcIiR7a2V5fVwiIG5vdCBmb3VuZCBpbiBhcnJheS5gKVxyXG4gICAgICByZXR1cm4gbm9kZVxyXG4gICAgfSxcclxuICAgIGdldENvbm5lY3Rpb25CeUtleTogYXN5bmMgZnVuY3Rpb24oeyBrZXkgfSkge1xyXG4gICAgICBsZXQgY29ubmVjdGlvbiA9IGNvbm5lY3Rpb25BcnJheS5maWx0ZXIodmFsdWUgPT4gdmFsdWUua2V5ID09IGtleSlbMF1cclxuICAgICAgaWYgKCFjb25uZWN0aW9uKSB0aHJvdyBuZXcgRXJyb3IoYOKAoiBjb25uZWN0aW9uIGtleSBcIiR7a2V5fVwiIG5vdCBmb3VuZCBpbiBhcnJheS5gKVxyXG4gICAgICByZXR1cm4gY29ubmVjdGlvblxyXG4gICAgfSxcclxuICB9XHJcbn1cclxuIl19
