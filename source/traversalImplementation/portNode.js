@@ -4,9 +4,9 @@ import { resolve } from 'path'
 /**  The purpose of this function is to find & yield next nodes.
  * @yields {Object { node: <node instance>} } a traversal configuration feed/iterato
  **/
-export async function* propagationControl({ forkEdge, getImplementation, additionalChildNode, graphInstance }) {
+export async function* propagationControl({ forkEdge, getImplementation, additionalChildNode, graph }) {
   let portNode = forkEdge.destination
-  let nodeIteratorFeed = await iterateNext({ node: forkEdge.destination, additionalChildNode, graphInstance })
+  let nodeIteratorFeed = await iterateNext({ node: forkEdge.destination, additionalChildNode, graph })
   yield* nodeIteratorFeed
 }
 
@@ -14,15 +14,15 @@ export async function* propagationControl({ forkEdge, getImplementation, additio
  * TODO: check if this implementation is needed after reroute node with returnedValue Reference edge implementation was implemented.
  * Selective implementation - where a switch is used to pick the next node from many, by comparing a value to case values.
  **/
-// export async function* selectivePropagation({ forkEdge, additionalChildNode, graphInstance }) {}
+// export async function* selectivePropagation({ forkEdge, additionalChildNode, graph }) {}
 
 /**
  * Loops through node connection to traverse the connected nodes' graphs
  * @param {*} nodeConnectionArray - array of connection for the particular node
  * @yield { Object{node: <node data>} }
  */
-async function* iterateNext({ node, additionalChildNode, graphInstance } = {}) {
-  const { nextArray } = await graphInstance.databaseWrapper.getNext({ concreteDatabase: graphInstance.database, nodeID: node.identity })
+async function* iterateNext({ node, additionalChildNode, graph } = {}) {
+  const { nextArray } = await graph.databaseWrapper.getNext({ concreteDatabase: graph.database, nodeID: node.identity })
   if (nextArray.length == 0) return
 
   // Bulk action - sort connection array - in addition to the database sorting of the query results.
