@@ -17,15 +17,15 @@ export const traverseThenProcessWithLogicalOperator = targetFunction =>
           assert(relatedPort.properties.logicalOperator, `• port (key="${relatedPort.properties.key}") must have "logicalOperator" property assigned, to aggregate results.`)
           // conditional comparison type to use for resolving boolean results.
           let logicalOperator = relatedPort.properties.logicalOperator
-          aggregator.merge(traversal.group.result, undefined, logicalOperator)
+          aggregator.merge(traversal.group.result, traversal.group.config, logicalOperator)
         }
       }
 
       if (traverser.shouldExecuteProcess()) {
-        let processResult = await processDataCallback({ nextProcessData: aggregator.calculatedLogicalOperaion, additionalParameter: {} })
+        let processResult = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
         if (traverser.shouldIncludeResult()) aggregator.add(processResult)
       }
 
-      return depth == 0 ? aggregator.processResultArray : aggregator // check if top level call and not an initiated nested recursive call.
+      return depth == 0 ? aggregator.finalResult : aggregator // check if top level call and not an initiated nested recursive call.
     },
   })

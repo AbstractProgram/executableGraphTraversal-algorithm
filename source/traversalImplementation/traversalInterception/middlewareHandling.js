@@ -11,7 +11,7 @@ export const handleMiddlewareNextCall = targetFunction =>
         nextCalled = true
         if (traverser.shouldContinue()) {
           let traversalIterator = await Reflect.apply(...arguments)
-          for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+          for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result, traversal.group.config /**Pass the related port node data, in case required*/)
         }
       }
 
@@ -22,6 +22,6 @@ export const handleMiddlewareNextCall = targetFunction =>
 
       if (!nextCalled) await nextFunction() // in some cases the data process returns without calling nextFunction (when it is a regular node, not a process intending to execute a middleware).
 
-      return depth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
+      return depth == 0 ? aggregator.finalResult : aggregator // check if top level call and not an initiated nested recursive call.
     },
   })

@@ -3,6 +3,16 @@ export class ConditionAggregator {
   processResultArray: Array
   calculatedLogicalOperaion: Boolean // the result of the logical operation on the array values.
 
+  // used in passing data to parent nodes for process use.
+  get value() {
+    return this.calculatedLogicalOperaion
+  }
+
+  // value for traversal depth 0
+  get finalResult() {
+    return this.processResultArray
+  }
+
   constructor(initialValue: Array) {
     this.processResultArray = initialValue || []
     return this
@@ -14,7 +24,8 @@ export class ConditionAggregator {
   }
 
   // merge aggregators
-  merge(additionalAggregatorArray: Aggregator, targetAggregator: Aggregator = this, logicalOperator: 'and' | 'or') {
+  merge(additionalAggregatorArray: Aggregator, logicalOperator: 'and' | 'or') {
+    let targetAggregator: Aggregator = this
     if (!targetAggregator.calculatedLogicalOperaion) targetAggregator.calculateLogicalOperation(logicalOperator)
     // TODO: test if it works with multiple nested condition statges.
     for (let additionalAggregator of additionalAggregatorArray) {

@@ -1,5 +1,7 @@
 import path from 'path'
 import assert from 'assert'
+import underscore from 'underscore'
+import filesystem from 'fs'
 
 /**
  * @return {String} String of rendered HTML document content.
@@ -22,11 +24,11 @@ import assert from 'assert'
     - Each insertion position is distinguished by the keys of the insert object. 
     - Content value (String | Array | Object) - which insert function is initialized with, and handles it. 
 
-  // TODO: deal with post rendering processing algorithms, when required.
   // TODO: deal with wrapping layouts e.g. layoutElement: 'webapp-layout-list'
  */
-export const templateRenderingWithInseritonPosition = async ({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) => {
-  let context = graph.context.middlewareParameter.context
+export async function templateRenderingWithInseritonPosition({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
+  // let context = graph.context.middlewareParameter.context
+
   /**
     1. Resolve resource File => filePath
     2. underscore.template(<filePath>)
@@ -34,6 +36,14 @@ export const templateRenderingWithInseritonPosition = async ({ stageNode, proces
     4. post processing (execution chain concept)
   */
   let filePath = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'fileContext' })
+  let fileContent = await filesystem.readFileSync(filePath, 'utf-8')
+  let parsedTemplate = underscore.template(fileContent)
 
-  return filePath
+  // reduce array for every nested object:
+  const insertionAlgorithm = content => () => content // TODO: allow for insertion points to pass parameters that affect the inserted values.
+  let insert = {}
+  for (let key in nextProcessData /** Object of arrays */) insert[key] = insertionAlgorithm(nextProcessData[key].join(''))
+
+  let renderedDocument = parsedTemplate({ insert, argument: {} })
+  return renderedDocument
 }

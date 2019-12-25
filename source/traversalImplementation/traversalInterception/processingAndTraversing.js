@@ -17,10 +17,10 @@ export const processThenTraverse = targetFunction =>
 
       if (traverser.shouldContinue()) {
         let traversalIterator = await Reflect.apply(...arguments)
-        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result, traversal.group.config /**Pass the related port node data, in case required*/)
       }
 
-      return depth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
+      return depth == 0 ? aggregator.finalResult : aggregator // check if top level call and not an initiated nested recursive call.
     },
   })
 
@@ -36,7 +36,7 @@ export const traverseThenProcess = targetFunction =>
 
       if (traverser.shouldContinue()) {
         let traversalIterator = await Reflect.apply(...arguments)
-        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result)
+        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result, traversal.group.config /**Pass the related port node data, in case required*/)
       }
 
       if (traverser.shouldExecuteProcess()) {
@@ -44,6 +44,6 @@ export const traverseThenProcess = targetFunction =>
         if (traverser.shouldIncludeResult()) aggregator.add(processResult)
       }
 
-      return depth == 0 ? aggregator.value : aggregator // check if top level call and not an initiated nested recursive call.
+      return depth == 0 ? aggregator.finalResult : aggregator // check if top level call and not an initiated nested recursive call.
     },
   })
