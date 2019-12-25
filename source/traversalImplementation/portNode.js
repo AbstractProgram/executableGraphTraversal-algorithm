@@ -1,50 +1,51 @@
-import { resolve } from 'path'
-// import { iterateConnection } from './iterateConnection.js'
+"use strict";Object.defineProperty(exports, "__esModule", { value: true });exports.propagationControl = propagationControl;
 
-/**  The purpose of this function is to find & yield next nodes.
- * @yields {Object { node: <node instance>} } a traversal configuration feed/iterato
- **/
-export async function* propagationControl({ forkEdge, getImplementation, additionalChildNode, graph }) {
-  let portNode = forkEdge.destination
-  let nodeIteratorFeed = await iterateNext({ node: forkEdge.destination, additionalChildNode, graph })
-  yield* nodeIteratorFeed
+
+
+
+
+async function* propagationControl({ forkEdge, getImplementation, additionalChildNode, graph }) {
+  let portNode = forkEdge.destination;
+  let nodeIteratorFeed = await iterateNext({ node: forkEdge.destination, additionalChildNode, graph });
+  yield* nodeIteratorFeed;
 }
 
-/**
- * TODO: check if this implementation is needed after reroute node with returnedValue Reference edge implementation was implemented.
- * Selective implementation - where a switch is used to pick the next node from many, by comparing a value to case values.
- **/
-// export async function* selectivePropagation({ forkEdge, additionalChildNode, graph }) {}
 
-/**
- * Loops through node connection to traverse the connected nodes' graphs
- * @param {*} nodeConnectionArray - array of connection for the particular node
- * @yield { Object{node: <node data>} }
- */
+
+
+
+
+
+
+
+
+
+
 async function* iterateNext({ node, additionalChildNode, graph } = {}) {
-  const { nextArray } = await graph.databaseWrapper.getNext({ concreteDatabase: graph.database, nodeID: node.identity })
-  if (nextArray.length == 0) return
+  const { nextArray } = await graph.databaseWrapper.getNext({ concreteDatabase: graph.database, nodeID: node.identity });
+  if (nextArray.length == 0) return;
 
-  // Bulk action - sort connection array - in addition to the database sorting of the query results.
-  nextArray.sort((former, latter) => former.connection.properties?.order - latter.connection.properties?.order) // using `order` property
+
+  nextArray.sort((former, latter) => {var _former$connection$pr, _latter$connection$pr;return ((_former$connection$pr = former.connection.properties) === null || _former$connection$pr === void 0 ? void 0 : _former$connection$pr.order) - ((_latter$connection$pr = latter.connection.properties) === null || _latter$connection$pr === void 0 ? void 0 : _latter$connection$pr.order);});
 
   for (let next of nextArray) {
-    // deal with additional nodes
-    let insertAdditional = additionalChildNode.reduce(
-      (accumolator, additional, index, array) => {
-        if (additional.placement.connectionKey == next.connection.properties.key) {
-          // additional.placement.position is a string that can be 'before' | 'after'
-          accumolator[additional.placement.position].push(additional.node) && delete array[index]
-        }
-        return accumolator
-      },
-      { before: [], after: [] },
-    )
-    additionalChildNode = additionalChildNode.filter(n => n) // filter empty (deleted) items
 
-    // add additional nodes to current node and yield all sequentially.
+    let insertAdditional = additionalChildNode.reduce(
+    (accumolator, additional, index, array) => {
+      if (additional.placement.connectionKey == next.connection.properties.key) {
+
+        accumolator[additional.placement.position].push(additional.node) && delete array[index];
+      }
+      return accumolator;
+    },
+    { before: [], after: [] });
+
+    additionalChildNode = additionalChildNode.filter(n => n);
+
+
     for (let nextNode of [...insertAdditional.before, next.destination, ...insertAdditional.after]) {
-      yield { node: nextNode }
+      yield { node: nextNode };
     }
   }
 }
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9wb3J0Tm9kZS5qcyJdLCJuYW1lcyI6WyJwcm9wYWdhdGlvbkNvbnRyb2wiLCJmb3JrRWRnZSIsImdldEltcGxlbWVudGF0aW9uIiwiYWRkaXRpb25hbENoaWxkTm9kZSIsImdyYXBoIiwicG9ydE5vZGUiLCJkZXN0aW5hdGlvbiIsIm5vZGVJdGVyYXRvckZlZWQiLCJpdGVyYXRlTmV4dCIsIm5vZGUiLCJuZXh0QXJyYXkiLCJkYXRhYmFzZVdyYXBwZXIiLCJnZXROZXh0IiwiY29uY3JldGVEYXRhYmFzZSIsImRhdGFiYXNlIiwibm9kZUlEIiwiaWRlbnRpdHkiLCJsZW5ndGgiLCJzb3J0IiwiZm9ybWVyIiwibGF0dGVyIiwiY29ubmVjdGlvbiIsInByb3BlcnRpZXMiLCJvcmRlciIsIm5leHQiLCJpbnNlcnRBZGRpdGlvbmFsIiwicmVkdWNlIiwiYWNjdW1vbGF0b3IiLCJhZGRpdGlvbmFsIiwiaW5kZXgiLCJhcnJheSIsInBsYWNlbWVudCIsImNvbm5lY3Rpb25LZXkiLCJrZXkiLCJwb3NpdGlvbiIsInB1c2giLCJiZWZvcmUiLCJhZnRlciIsImZpbHRlciIsIm4iLCJuZXh0Tm9kZSJdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBTU8sZ0JBQWdCQSxrQkFBaEIsQ0FBbUMsRUFBRUMsUUFBRixFQUFZQyxpQkFBWixFQUErQkMsbUJBQS9CLEVBQW9EQyxLQUFwRCxFQUFuQyxFQUFnRztBQUNyRyxNQUFJQyxRQUFRLEdBQUdKLFFBQVEsQ0FBQ0ssV0FBeEI7QUFDQSxNQUFJQyxnQkFBZ0IsR0FBRyxNQUFNQyxXQUFXLENBQUMsRUFBRUMsSUFBSSxFQUFFUixRQUFRLENBQUNLLFdBQWpCLEVBQThCSCxtQkFBOUIsRUFBbURDLEtBQW5ELEVBQUQsQ0FBeEM7QUFDQSxTQUFPRyxnQkFBUDtBQUNEOzs7Ozs7Ozs7Ozs7O0FBYUQsZ0JBQWdCQyxXQUFoQixDQUE0QixFQUFFQyxJQUFGLEVBQVFOLG1CQUFSLEVBQTZCQyxLQUE3QixLQUF1QyxFQUFuRSxFQUF1RTtBQUNyRSxRQUFNLEVBQUVNLFNBQUYsS0FBZ0IsTUFBTU4sS0FBSyxDQUFDTyxlQUFOLENBQXNCQyxPQUF0QixDQUE4QixFQUFFQyxnQkFBZ0IsRUFBRVQsS0FBSyxDQUFDVSxRQUExQixFQUFvQ0MsTUFBTSxFQUFFTixJQUFJLENBQUNPLFFBQWpELEVBQTlCLENBQTVCO0FBQ0EsTUFBSU4sU0FBUyxDQUFDTyxNQUFWLElBQW9CLENBQXhCLEVBQTJCOzs7QUFHM0JQLEVBQUFBLFNBQVMsQ0FBQ1EsSUFBVixDQUFlLENBQUNDLE1BQUQsRUFBU0MsTUFBVCw4REFBb0IsMEJBQUFELE1BQU0sQ0FBQ0UsVUFBUCxDQUFrQkMsVUFBbEIsZ0ZBQThCQyxLQUE5Qiw4QkFBc0NILE1BQU0sQ0FBQ0MsVUFBUCxDQUFrQkMsVUFBeEQsMERBQXNDLHNCQUE4QkMsS0FBcEUsQ0FBcEIsRUFBZjs7QUFFQSxPQUFLLElBQUlDLElBQVQsSUFBaUJkLFNBQWpCLEVBQTRCOztBQUUxQixRQUFJZSxnQkFBZ0IsR0FBR3RCLG1CQUFtQixDQUFDdUIsTUFBcEI7QUFDckIsS0FBQ0MsV0FBRCxFQUFjQyxVQUFkLEVBQTBCQyxLQUExQixFQUFpQ0MsS0FBakMsS0FBMkM7QUFDekMsVUFBSUYsVUFBVSxDQUFDRyxTQUFYLENBQXFCQyxhQUFyQixJQUFzQ1IsSUFBSSxDQUFDSCxVQUFMLENBQWdCQyxVQUFoQixDQUEyQlcsR0FBckUsRUFBMEU7O0FBRXhFTixRQUFBQSxXQUFXLENBQUNDLFVBQVUsQ0FBQ0csU0FBWCxDQUFxQkcsUUFBdEIsQ0FBWCxDQUEyQ0MsSUFBM0MsQ0FBZ0RQLFVBQVUsQ0FBQ25CLElBQTNELEtBQW9FLE9BQU9xQixLQUFLLENBQUNELEtBQUQsQ0FBaEY7QUFDRDtBQUNELGFBQU9GLFdBQVA7QUFDRCxLQVBvQjtBQVFyQixNQUFFUyxNQUFNLEVBQUUsRUFBVixFQUFjQyxLQUFLLEVBQUUsRUFBckIsRUFScUIsQ0FBdkI7O0FBVUFsQyxJQUFBQSxtQkFBbUIsR0FBR0EsbUJBQW1CLENBQUNtQyxNQUFwQixDQUEyQkMsQ0FBQyxJQUFJQSxDQUFoQyxDQUF0Qjs7O0FBR0EsU0FBSyxJQUFJQyxRQUFULElBQXFCLENBQUMsR0FBR2YsZ0JBQWdCLENBQUNXLE1BQXJCLEVBQTZCWixJQUFJLENBQUNsQixXQUFsQyxFQUErQyxHQUFHbUIsZ0JBQWdCLENBQUNZLEtBQW5FLENBQXJCLEVBQWdHO0FBQzlGLFlBQU0sRUFBRTVCLElBQUksRUFBRStCLFFBQVIsRUFBTjtBQUNEO0FBQ0Y7QUFDRiIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IHJlc29sdmUgfSBmcm9tICdwYXRoJ1xuLy8gaW1wb3J0IHsgaXRlcmF0ZUNvbm5lY3Rpb24gfSBmcm9tICcuL2l0ZXJhdGVDb25uZWN0aW9uLmpzJ1xuXG4vKiogIFRoZSBwdXJwb3NlIG9mIHRoaXMgZnVuY3Rpb24gaXMgdG8gZmluZCAmIHlpZWxkIG5leHQgbm9kZXMuXG4gKiBAeWllbGRzIHtPYmplY3QgeyBub2RlOiA8bm9kZSBpbnN0YW5jZT59IH0gYSB0cmF2ZXJzYWwgY29uZmlndXJhdGlvbiBmZWVkL2l0ZXJhdG9cbiAqKi9cbmV4cG9ydCBhc3luYyBmdW5jdGlvbiogcHJvcGFnYXRpb25Db250cm9sKHsgZm9ya0VkZ2UsIGdldEltcGxlbWVudGF0aW9uLCBhZGRpdGlvbmFsQ2hpbGROb2RlLCBncmFwaCB9KSB7XG4gIGxldCBwb3J0Tm9kZSA9IGZvcmtFZGdlLmRlc3RpbmF0aW9uXG4gIGxldCBub2RlSXRlcmF0b3JGZWVkID0gYXdhaXQgaXRlcmF0ZU5leHQoeyBub2RlOiBmb3JrRWRnZS5kZXN0aW5hdGlvbiwgYWRkaXRpb25hbENoaWxkTm9kZSwgZ3JhcGggfSlcbiAgeWllbGQqIG5vZGVJdGVyYXRvckZlZWRcbn1cblxuLyoqXG4gKiBUT0RPOiBjaGVjayBpZiB0aGlzIGltcGxlbWVudGF0aW9uIGlzIG5lZWRlZCBhZnRlciByZXJvdXRlIG5vZGUgd2l0aCByZXR1cm5lZFZhbHVlIFJlZmVyZW5jZSBlZGdlIGltcGxlbWVudGF0aW9uIHdhcyBpbXBsZW1lbnRlZC5cbiAqIFNlbGVjdGl2ZSBpbXBsZW1lbnRhdGlvbiAtIHdoZXJlIGEgc3dpdGNoIGlzIHVzZWQgdG8gcGljayB0aGUgbmV4dCBub2RlIGZyb20gbWFueSwgYnkgY29tcGFyaW5nIGEgdmFsdWUgdG8gY2FzZSB2YWx1ZXMuXG4gKiovXG4vLyBleHBvcnQgYXN5bmMgZnVuY3Rpb24qIHNlbGVjdGl2ZVByb3BhZ2F0aW9uKHsgZm9ya0VkZ2UsIGFkZGl0aW9uYWxDaGlsZE5vZGUsIGdyYXBoIH0pIHt9XG5cbi8qKlxuICogTG9vcHMgdGhyb3VnaCBub2RlIGNvbm5lY3Rpb24gdG8gdHJhdmVyc2UgdGhlIGNvbm5lY3RlZCBub2RlcycgZ3JhcGhzXG4gKiBAcGFyYW0geyp9IG5vZGVDb25uZWN0aW9uQXJyYXkgLSBhcnJheSBvZiBjb25uZWN0aW9uIGZvciB0aGUgcGFydGljdWxhciBub2RlXG4gKiBAeWllbGQgeyBPYmplY3R7bm9kZTogPG5vZGUgZGF0YT59IH1cbiAqL1xuYXN5bmMgZnVuY3Rpb24qIGl0ZXJhdGVOZXh0KHsgbm9kZSwgYWRkaXRpb25hbENoaWxkTm9kZSwgZ3JhcGggfSA9IHt9KSB7XG4gIGNvbnN0IHsgbmV4dEFycmF5IH0gPSBhd2FpdCBncmFwaC5kYXRhYmFzZVdyYXBwZXIuZ2V0TmV4dCh7IGNvbmNyZXRlRGF0YWJhc2U6IGdyYXBoLmRhdGFiYXNlLCBub2RlSUQ6IG5vZGUuaWRlbnRpdHkgfSlcbiAgaWYgKG5leHRBcnJheS5sZW5ndGggPT0gMCkgcmV0dXJuXG5cbiAgLy8gQnVsayBhY3Rpb24gLSBzb3J0IGNvbm5lY3Rpb24gYXJyYXkgLSBpbiBhZGRpdGlvbiB0byB0aGUgZGF0YWJhc2Ugc29ydGluZyBvZiB0aGUgcXVlcnkgcmVzdWx0cy5cbiAgbmV4dEFycmF5LnNvcnQoKGZvcm1lciwgbGF0dGVyKSA9PiBmb3JtZXIuY29ubmVjdGlvbi5wcm9wZXJ0aWVzPy5vcmRlciAtIGxhdHRlci5jb25uZWN0aW9uLnByb3BlcnRpZXM/Lm9yZGVyKSAvLyB1c2luZyBgb3JkZXJgIHByb3BlcnR5XG5cbiAgZm9yIChsZXQgbmV4dCBvZiBuZXh0QXJyYXkpIHtcbiAgICAvLyBkZWFsIHdpdGggYWRkaXRpb25hbCBub2Rlc1xuICAgIGxldCBpbnNlcnRBZGRpdGlvbmFsID0gYWRkaXRpb25hbENoaWxkTm9kZS5yZWR1Y2UoXG4gICAgICAoYWNjdW1vbGF0b3IsIGFkZGl0aW9uYWwsIGluZGV4LCBhcnJheSkgPT4ge1xuICAgICAgICBpZiAoYWRkaXRpb25hbC5wbGFjZW1lbnQuY29ubmVjdGlvbktleSA9PSBuZXh0LmNvbm5lY3Rpb24ucHJvcGVydGllcy5rZXkpIHtcbiAgICAgICAgICAvLyBhZGRpdGlvbmFsLnBsYWNlbWVudC5wb3NpdGlvbiBpcyBhIHN0cmluZyB0aGF0IGNhbiBiZSAnYmVmb3JlJyB8ICdhZnRlcidcbiAgICAgICAgICBhY2N1bW9sYXRvclthZGRpdGlvbmFsLnBsYWNlbWVudC5wb3NpdGlvbl0ucHVzaChhZGRpdGlvbmFsLm5vZGUpICYmIGRlbGV0ZSBhcnJheVtpbmRleF1cbiAgICAgICAgfVxuICAgICAgICByZXR1cm4gYWNjdW1vbGF0b3JcbiAgICAgIH0sXG4gICAgICB7IGJlZm9yZTogW10sIGFmdGVyOiBbXSB9LFxuICAgIClcbiAgICBhZGRpdGlvbmFsQ2hpbGROb2RlID0gYWRkaXRpb25hbENoaWxkTm9kZS5maWx0ZXIobiA9PiBuKSAvLyBmaWx0ZXIgZW1wdHkgKGRlbGV0ZWQpIGl0ZW1zXG5cbiAgICAvLyBhZGQgYWRkaXRpb25hbCBub2RlcyB0byBjdXJyZW50IG5vZGUgYW5kIHlpZWxkIGFsbCBzZXF1ZW50aWFsbHkuXG4gICAgZm9yIChsZXQgbmV4dE5vZGUgb2YgWy4uLmluc2VydEFkZGl0aW9uYWwuYmVmb3JlLCBuZXh0LmRlc3RpbmF0aW9uLCAuLi5pbnNlcnRBZGRpdGlvbmFsLmFmdGVyXSkge1xuICAgICAgeWllbGQgeyBub2RlOiBuZXh0Tm9kZSB9XG4gICAgfVxuICB9XG59XG4iXX0=
