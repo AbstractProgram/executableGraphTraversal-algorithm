@@ -1,46 +1,47 @@
-import path from 'path'
-import assert from 'assert'
-import { exec, execSync, spawn, spawnSync } from 'child_process'
+"use strict";var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports, "__esModule", { value: true });exports.executeShellscriptFile = executeShellscriptFile;exports.executeScriptSpawn = executeScriptSpawn;var _path = _interopRequireDefault(require("path"));
 
-// Execute task script in the same process (nodejs childprocess.execSync) using a reference scriptPath property. -  Relies on function reference concept.
-export async function executeShellscriptFile({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
+var _child_process = require("child_process");
+
+
+async function executeShellscriptFile({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
   let message = ` _____                          _        
   | ____|__  __ ___   ___  _   _ | |_  ___ 
   |  _|  \\ \\/ // _ \\ / __|| | | || __|/ _ \\
   | |___  >  <|  __/| (__ | |_| || |_|  __/    
-  |_____|/_/\\_\\\\___| \\___| \\__,_| \\__|\\___|`
+  |_____|/_/\\_\\\\___| \\___| \\__,_| \\__|\\___|`;
 
-  let scriptPath = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'fileContext' })
+  let scriptPath = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'fileContext' });
 
   try {
-    console.log(message)
-    console.log(`\x1b[45m%s\x1b[0m`, `shellscript path: ${scriptPath}`)
-    execSync(`sh ${scriptPath}`, { cwd: path.dirname(scriptPath), shell: true, stdio: ['inherit', 'inherit', 'inherit'] })
+    console.log(message);
+    console.log(`\x1b[45m%s\x1b[0m`, `shellscript path: ${scriptPath}`);
+    (0, _child_process.execSync)(`sh ${scriptPath}`, { cwd: _path.default.dirname(scriptPath), shell: true, stdio: ['inherit', 'inherit', 'inherit'] });
   } catch (error) {
-    throw error
-    process.exit(1)
+    throw error;
+    process.exit(1);
   }
-  // await new Promise(resolve => setTimeout(resolve, 500)) // wait x seconds before next script execution // important to prevent 'unable to re-open stdin' error between shells.
-  return null
+
+  return null;
 }
 
-/**
-  Run childprocess synchnolous spawn command: 
-  Required properties on process node: 
-  @param {String} command
-  @param {String[]} argument
-  @param {Json stringifies string} option
-*/
-export async function executeScriptSpawn({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
-  let childProcess
+
+
+
+
+
+
+
+async function executeScriptSpawn({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
+  let childProcess;
   try {
     let command = processNode.properties.command,
-      argument = processNode.properties.argument.join(' '),
-      option = JSON.stringify(processNode.properties.option)
-    console.log(`\x1b[45m%s\x1b[0m`, `${command} ${argument}`)
-    childProcess = spawnSync(command, argument, option)
-    if (childProcess.status > 0) throw childProcess.error
+    argument = processNode.properties.argument.join(' '),
+    option = JSON.stringify(processNode.properties.option);
+    console.log(`\x1b[45m%s\x1b[0m`, `${command} ${argument}`);
+    childProcess = (0, _child_process.spawnSync)(command, argument, option);
+    if (childProcess.status > 0) throw childProcess.error;
   } catch (error) {
-    process.exit(childProcess.status)
+    process.exit(childProcess.status);
   }
 }
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9wcm9jZXNzTm9kZS9zY3JpcHRFeGVjdXRpb24uanMiXSwibmFtZXMiOlsiZXhlY3V0ZVNoZWxsc2NyaXB0RmlsZSIsInN0YWdlTm9kZSIsInByb2Nlc3NOb2RlIiwiZ3JhcGgiLCJuZXh0UHJvY2Vzc0RhdGEiLCJhZGRpdGlvbmFsUGFyYW1ldGVyIiwidHJhdmVyc2VDYWxsQ29udGV4dCIsIm1lc3NhZ2UiLCJzY3JpcHRQYXRoIiwidHJhdmVyc2VySW5zdHJ1Y3Rpb24iLCJyZXNvdXJjZVJlc29sdXRpb24iLCJyZXNvbHZlUmVzb3VyY2UiLCJ0YXJnZXROb2RlIiwiY29udGV4dFByb3BlcnR5TmFtZSIsImNvbnNvbGUiLCJsb2ciLCJjd2QiLCJwYXRoIiwiZGlybmFtZSIsInNoZWxsIiwic3RkaW8iLCJlcnJvciIsInByb2Nlc3MiLCJleGl0IiwiZXhlY3V0ZVNjcmlwdFNwYXduIiwiY2hpbGRQcm9jZXNzIiwiY29tbWFuZCIsInByb3BlcnRpZXMiLCJhcmd1bWVudCIsImpvaW4iLCJvcHRpb24iLCJKU09OIiwic3RyaW5naWZ5Iiwic3RhdHVzIl0sIm1hcHBpbmdzIjoid1FBQUE7O0FBRUE7OztBQUdPLGVBQWVBLHNCQUFmLENBQXNDLEVBQUVDLFNBQUYsRUFBYUMsV0FBYixFQUEwQkMsS0FBSyxHQUFHLElBQWxDLEVBQXdDQyxlQUF4QyxFQUF0QyxFQUFpRyxFQUFFQyxtQkFBRixFQUF1QkMsbUJBQXZCLEVBQWpHLEVBQStJO0FBQ3BKLE1BQUlDLE9BQU8sR0FBSTs7OzttREFBZjs7QUFNQSxNQUFJQyxVQUFVLEdBQUcsTUFBTUwsS0FBSyxDQUFDTSxvQkFBTixDQUEyQkMsa0JBQTNCLENBQThDQyxlQUE5QyxDQUE4RCxFQUFFQyxVQUFVLEVBQUVWLFdBQWQsRUFBMkJDLEtBQTNCLEVBQWtDVSxtQkFBbUIsRUFBRSxhQUF2RCxFQUE5RCxDQUF2Qjs7QUFFQSxNQUFJO0FBQ0ZDLElBQUFBLE9BQU8sQ0FBQ0MsR0FBUixDQUFZUixPQUFaO0FBQ0FPLElBQUFBLE9BQU8sQ0FBQ0MsR0FBUixDQUFhLG1CQUFiLEVBQWtDLHFCQUFvQlAsVUFBVyxFQUFqRTtBQUNBLGlDQUFVLE1BQUtBLFVBQVcsRUFBMUIsRUFBNkIsRUFBRVEsR0FBRyxFQUFFQyxjQUFLQyxPQUFMLENBQWFWLFVBQWIsQ0FBUCxFQUFpQ1csS0FBSyxFQUFFLElBQXhDLEVBQThDQyxLQUFLLEVBQUUsQ0FBQyxTQUFELEVBQVksU0FBWixFQUF1QixTQUF2QixDQUFyRCxFQUE3QjtBQUNELEdBSkQsQ0FJRSxPQUFPQyxLQUFQLEVBQWM7QUFDZCxVQUFNQSxLQUFOO0FBQ0FDLElBQUFBLE9BQU8sQ0FBQ0MsSUFBUixDQUFhLENBQWI7QUFDRDs7QUFFRCxTQUFPLElBQVA7QUFDRDs7Ozs7Ozs7O0FBU00sZUFBZUMsa0JBQWYsQ0FBa0MsRUFBRXZCLFNBQUYsRUFBYUMsV0FBYixFQUEwQkMsS0FBSyxHQUFHLElBQWxDLEVBQXdDQyxlQUF4QyxFQUFsQyxFQUE2RixFQUFFQyxtQkFBRixFQUF1QkMsbUJBQXZCLEVBQTdGLEVBQTJJO0FBQ2hKLE1BQUltQixZQUFKO0FBQ0EsTUFBSTtBQUNGLFFBQUlDLE9BQU8sR0FBR3hCLFdBQVcsQ0FBQ3lCLFVBQVosQ0FBdUJELE9BQXJDO0FBQ0VFLElBQUFBLFFBQVEsR0FBRzFCLFdBQVcsQ0FBQ3lCLFVBQVosQ0FBdUJDLFFBQXZCLENBQWdDQyxJQUFoQyxDQUFxQyxHQUFyQyxDQURiO0FBRUVDLElBQUFBLE1BQU0sR0FBR0MsSUFBSSxDQUFDQyxTQUFMLENBQWU5QixXQUFXLENBQUN5QixVQUFaLENBQXVCRyxNQUF0QyxDQUZYO0FBR0FoQixJQUFBQSxPQUFPLENBQUNDLEdBQVIsQ0FBYSxtQkFBYixFQUFrQyxHQUFFVyxPQUFRLElBQUdFLFFBQVMsRUFBeEQ7QUFDQUgsSUFBQUEsWUFBWSxHQUFHLDhCQUFVQyxPQUFWLEVBQW1CRSxRQUFuQixFQUE2QkUsTUFBN0IsQ0FBZjtBQUNBLFFBQUlMLFlBQVksQ0FBQ1EsTUFBYixHQUFzQixDQUExQixFQUE2QixNQUFNUixZQUFZLENBQUNKLEtBQW5CO0FBQzlCLEdBUEQsQ0FPRSxPQUFPQSxLQUFQLEVBQWM7QUFDZEMsSUFBQUEsT0FBTyxDQUFDQyxJQUFSLENBQWFFLFlBQVksQ0FBQ1EsTUFBMUI7QUFDRDtBQUNGIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHBhdGggZnJvbSAncGF0aCdcbmltcG9ydCBhc3NlcnQgZnJvbSAnYXNzZXJ0J1xuaW1wb3J0IHsgZXhlYywgZXhlY1N5bmMsIHNwYXduLCBzcGF3blN5bmMgfSBmcm9tICdjaGlsZF9wcm9jZXNzJ1xuXG4vLyBFeGVjdXRlIHRhc2sgc2NyaXB0IGluIHRoZSBzYW1lIHByb2Nlc3MgKG5vZGVqcyBjaGlsZHByb2Nlc3MuZXhlY1N5bmMpIHVzaW5nIGEgcmVmZXJlbmNlIHNjcmlwdFBhdGggcHJvcGVydHkuIC0gIFJlbGllcyBvbiBmdW5jdGlvbiByZWZlcmVuY2UgY29uY2VwdC5cbmV4cG9ydCBhc3luYyBmdW5jdGlvbiBleGVjdXRlU2hlbGxzY3JpcHRGaWxlKHsgc3RhZ2VOb2RlLCBwcm9jZXNzTm9kZSwgZ3JhcGggPSB0aGlzLCBuZXh0UHJvY2Vzc0RhdGEgfSwgeyBhZGRpdGlvbmFsUGFyYW1ldGVyLCB0cmF2ZXJzZUNhbGxDb250ZXh0IH0pIHtcbiAgbGV0IG1lc3NhZ2UgPSBgIF9fX19fICAgICAgICAgICAgICAgICAgICAgICAgICBfICAgICAgICBcbiAgfCBfX19ffF9fICBfXyBfX18gICBfX18gIF8gICBfIHwgfF8gIF9fXyBcbiAgfCAgX3wgIFxcXFwgXFxcXC8gLy8gXyBcXFxcIC8gX198fCB8IHwgfHwgX198LyBfIFxcXFxcbiAgfCB8X19fICA+ICA8fCAgX18vfCAoX18gfCB8X3wgfHwgfF98ICBfXy8gICAgXG4gIHxfX19fX3wvXy9cXFxcX1xcXFxcXFxcX19ffCBcXFxcX19ffCBcXFxcX18sX3wgXFxcXF9ffFxcXFxfX198YFxuXG4gIGxldCBzY3JpcHRQYXRoID0gYXdhaXQgZ3JhcGgudHJhdmVyc2VySW5zdHJ1Y3Rpb24ucmVzb3VyY2VSZXNvbHV0aW9uLnJlc29sdmVSZXNvdXJjZSh7IHRhcmdldE5vZGU6IHByb2Nlc3NOb2RlLCBncmFwaCwgY29udGV4dFByb3BlcnR5TmFtZTogJ2ZpbGVDb250ZXh0JyB9KVxuXG4gIHRyeSB7XG4gICAgY29uc29sZS5sb2cobWVzc2FnZSlcbiAgICBjb25zb2xlLmxvZyhgXFx4MWJbNDVtJXNcXHgxYlswbWAsIGBzaGVsbHNjcmlwdCBwYXRoOiAke3NjcmlwdFBhdGh9YClcbiAgICBleGVjU3luYyhgc2ggJHtzY3JpcHRQYXRofWAsIHsgY3dkOiBwYXRoLmRpcm5hbWUoc2NyaXB0UGF0aCksIHNoZWxsOiB0cnVlLCBzdGRpbzogWydpbmhlcml0JywgJ2luaGVyaXQnLCAnaW5oZXJpdCddIH0pXG4gIH0gY2F0Y2ggKGVycm9yKSB7XG4gICAgdGhyb3cgZXJyb3JcbiAgICBwcm9jZXNzLmV4aXQoMSlcbiAgfVxuICAvLyBhd2FpdCBuZXcgUHJvbWlzZShyZXNvbHZlID0+IHNldFRpbWVvdXQocmVzb2x2ZSwgNTAwKSkgLy8gd2FpdCB4IHNlY29uZHMgYmVmb3JlIG5leHQgc2NyaXB0IGV4ZWN1dGlvbiAvLyBpbXBvcnRhbnQgdG8gcHJldmVudCAndW5hYmxlIHRvIHJlLW9wZW4gc3RkaW4nIGVycm9yIGJldHdlZW4gc2hlbGxzLlxuICByZXR1cm4gbnVsbFxufVxuXG4vKipcbiAgUnVuIGNoaWxkcHJvY2VzcyBzeW5jaG5vbG91cyBzcGF3biBjb21tYW5kOiBcbiAgUmVxdWlyZWQgcHJvcGVydGllcyBvbiBwcm9jZXNzIG5vZGU6IFxuICBAcGFyYW0ge1N0cmluZ30gY29tbWFuZFxuICBAcGFyYW0ge1N0cmluZ1tdfSBhcmd1bWVudFxuICBAcGFyYW0ge0pzb24gc3RyaW5naWZpZXMgc3RyaW5nfSBvcHRpb25cbiovXG5leHBvcnQgYXN5bmMgZnVuY3Rpb24gZXhlY3V0ZVNjcmlwdFNwYXduKHsgc3RhZ2VOb2RlLCBwcm9jZXNzTm9kZSwgZ3JhcGggPSB0aGlzLCBuZXh0UHJvY2Vzc0RhdGEgfSwgeyBhZGRpdGlvbmFsUGFyYW1ldGVyLCB0cmF2ZXJzZUNhbGxDb250ZXh0IH0pIHtcbiAgbGV0IGNoaWxkUHJvY2Vzc1xuICB0cnkge1xuICAgIGxldCBjb21tYW5kID0gcHJvY2Vzc05vZGUucHJvcGVydGllcy5jb21tYW5kLFxuICAgICAgYXJndW1lbnQgPSBwcm9jZXNzTm9kZS5wcm9wZXJ0aWVzLmFyZ3VtZW50LmpvaW4oJyAnKSxcbiAgICAgIG9wdGlvbiA9IEpTT04uc3RyaW5naWZ5KHByb2Nlc3NOb2RlLnByb3BlcnRpZXMub3B0aW9uKVxuICAgIGNvbnNvbGUubG9nKGBcXHgxYls0NW0lc1xceDFiWzBtYCwgYCR7Y29tbWFuZH0gJHthcmd1bWVudH1gKVxuICAgIGNoaWxkUHJvY2VzcyA9IHNwYXduU3luYyhjb21tYW5kLCBhcmd1bWVudCwgb3B0aW9uKVxuICAgIGlmIChjaGlsZFByb2Nlc3Muc3RhdHVzID4gMCkgdGhyb3cgY2hpbGRQcm9jZXNzLmVycm9yXG4gIH0gY2F0Y2ggKGVycm9yKSB7XG4gICAgcHJvY2Vzcy5leGl0KGNoaWxkUHJvY2Vzcy5zdGF0dXMpXG4gIH1cbn1cbiJdfQ==

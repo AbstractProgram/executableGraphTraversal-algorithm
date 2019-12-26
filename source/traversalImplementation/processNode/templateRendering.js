@@ -1,49 +1,50 @@
-import path from 'path'
-import assert from 'assert'
-import underscore from 'underscore'
-import filesystem from 'fs'
+"use strict";var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports, "__esModule", { value: true });exports.templateRenderingWithInseritonPosition = templateRenderingWithInseritonPosition;
 
-/**
- * @return {String} String of rendered HTML document content.
- Underscore templating options - https://2ality.com/2012/06/underscore-templates.html
+var _underscore = _interopRequireDefault(require("underscore"));
+var _fs = _interopRequireDefault(require("fs"));
 
-  1. traverse nested
-  2. aggregate into nested arrays (by insertion position keys).
-  3. render current node template with insetion position content.
-  4. continue processing execution chain (post-processor of result concept)
 
-  Server-side template system (run-time substitution happens on the web server): 
-    - Template resource: template file with insertion points.
-    - Content resource (template parts): Argumnets passed to the parsed template function. 
-    - Template engine/processing/rendening element/module: underscore.template 
 
-  server-side javascript that is located in the templates, is executed. Rendering template requires an object of functions for each insetion position key.
-  Where:
-    - insert object functions are called and expect to return a string. Functions represent- the algorithms used to deal with content value and add it to the document in a specific position,
-      which will receive the parameters that can change it's behavior. Using a function allows for creating specific logic for each insetion point.
-    - Each insertion position is distinguished by the keys of the insert object. 
-    - Content value (String | Array | Object) - which insert function is initialized with, and handles it. 
 
-  // TODO: deal with wrapping layouts e.g. layoutElement: 'webapp-layout-list'
- */
-export async function templateRenderingWithInseritonPosition({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
-  // let context = graph.context.middlewareParameter.context
 
-  /**
-    1. Resolve resource File => filePath
-    2. underscore.template(<filePath>)
-    3. render template with nested nodes results.
-    4. post processing (execution chain concept)
-  */
-  let filePath = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'fileContext' })
-  let fileContent = await filesystem.readFileSync(filePath, 'utf-8')
-  let parsedTemplate = underscore.template(fileContent)
 
-  // reduce array for every nested object:
-  const insertionAlgorithm = content => () => content // TODO: allow for insertion points to pass parameters that affect the inserted values.
-  let insert = {}
-  for (let key in nextProcessData /** Object of arrays */) insert[key] = insertionAlgorithm(nextProcessData[key].join(''))
 
-  let renderedDocument = parsedTemplate({ insert, argument: {} })
-  return renderedDocument
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function templateRenderingWithInseritonPosition({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
+
+
+
+
+
+
+
+
+  let filePath = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'fileContext' });
+  let fileContent = await _fs.default.readFileSync(filePath, 'utf-8');
+  let parsedTemplate = _underscore.default.template(fileContent);
+
+
+  const insertionAlgorithm = content => () => content;
+  let insert = {};
+  for (let key in nextProcessData) insert[key] = insertionAlgorithm(nextProcessData[key].join(''));
+
+  let renderedDocument = parsedTemplate({ insert, argument: {} });
+  return renderedDocument;
 }
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9wcm9jZXNzTm9kZS90ZW1wbGF0ZVJlbmRlcmluZy5qcyJdLCJuYW1lcyI6WyJ0ZW1wbGF0ZVJlbmRlcmluZ1dpdGhJbnNlcml0b25Qb3NpdGlvbiIsInN0YWdlTm9kZSIsInByb2Nlc3NOb2RlIiwiZ3JhcGgiLCJuZXh0UHJvY2Vzc0RhdGEiLCJhZGRpdGlvbmFsUGFyYW1ldGVyIiwidHJhdmVyc2VDYWxsQ29udGV4dCIsImZpbGVQYXRoIiwidHJhdmVyc2VySW5zdHJ1Y3Rpb24iLCJyZXNvdXJjZVJlc29sdXRpb24iLCJyZXNvbHZlUmVzb3VyY2UiLCJ0YXJnZXROb2RlIiwiY29udGV4dFByb3BlcnR5TmFtZSIsImZpbGVDb250ZW50IiwiZmlsZXN5c3RlbSIsInJlYWRGaWxlU3luYyIsInBhcnNlZFRlbXBsYXRlIiwidW5kZXJzY29yZSIsInRlbXBsYXRlIiwiaW5zZXJ0aW9uQWxnb3JpdGhtIiwiY29udGVudCIsImluc2VydCIsImtleSIsImpvaW4iLCJyZW5kZXJlZERvY3VtZW50IiwiYXJndW1lbnQiXSwibWFwcGluZ3MiOiI7O0FBRUE7QUFDQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQXlCTyxlQUFlQSxzQ0FBZixDQUFzRCxFQUFFQyxTQUFGLEVBQWFDLFdBQWIsRUFBMEJDLEtBQUssR0FBRyxJQUFsQyxFQUF3Q0MsZUFBeEMsRUFBdEQsRUFBaUgsRUFBRUMsbUJBQUYsRUFBdUJDLG1CQUF2QixFQUFqSCxFQUErSjs7Ozs7Ozs7O0FBU3BLLE1BQUlDLFFBQVEsR0FBRyxNQUFNSixLQUFLLENBQUNLLG9CQUFOLENBQTJCQyxrQkFBM0IsQ0FBOENDLGVBQTlDLENBQThELEVBQUVDLFVBQVUsRUFBRVQsV0FBZCxFQUEyQkMsS0FBM0IsRUFBa0NTLG1CQUFtQixFQUFFLGFBQXZELEVBQTlELENBQXJCO0FBQ0EsTUFBSUMsV0FBVyxHQUFHLE1BQU1DLFlBQVdDLFlBQVgsQ0FBd0JSLFFBQXhCLEVBQWtDLE9BQWxDLENBQXhCO0FBQ0EsTUFBSVMsY0FBYyxHQUFHQyxvQkFBV0MsUUFBWCxDQUFvQkwsV0FBcEIsQ0FBckI7OztBQUdBLFFBQU1NLGtCQUFrQixHQUFHQyxPQUFPLElBQUksTUFBTUEsT0FBNUM7QUFDQSxNQUFJQyxNQUFNLEdBQUcsRUFBYjtBQUNBLE9BQUssSUFBSUMsR0FBVCxJQUFnQmxCLGVBQWhCLEVBQXlEaUIsTUFBTSxDQUFDQyxHQUFELENBQU4sR0FBY0gsa0JBQWtCLENBQUNmLGVBQWUsQ0FBQ2tCLEdBQUQsQ0FBZixDQUFxQkMsSUFBckIsQ0FBMEIsRUFBMUIsQ0FBRCxDQUFoQzs7QUFFekQsTUFBSUMsZ0JBQWdCLEdBQUdSLGNBQWMsQ0FBQyxFQUFFSyxNQUFGLEVBQVVJLFFBQVEsRUFBRSxFQUFwQixFQUFELENBQXJDO0FBQ0EsU0FBT0QsZ0JBQVA7QUFDRCIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBwYXRoIGZyb20gJ3BhdGgnXG5pbXBvcnQgYXNzZXJ0IGZyb20gJ2Fzc2VydCdcbmltcG9ydCB1bmRlcnNjb3JlIGZyb20gJ3VuZGVyc2NvcmUnXG5pbXBvcnQgZmlsZXN5c3RlbSBmcm9tICdmcydcblxuLyoqXG4gKiBAcmV0dXJuIHtTdHJpbmd9IFN0cmluZyBvZiByZW5kZXJlZCBIVE1MIGRvY3VtZW50IGNvbnRlbnQuXG4gVW5kZXJzY29yZSB0ZW1wbGF0aW5nIG9wdGlvbnMgLSBodHRwczovLzJhbGl0eS5jb20vMjAxMi8wNi91bmRlcnNjb3JlLXRlbXBsYXRlcy5odG1sXG5cbiAgMS4gdHJhdmVyc2UgbmVzdGVkXG4gIDIuIGFnZ3JlZ2F0ZSBpbnRvIG5lc3RlZCBhcnJheXMgKGJ5IGluc2VydGlvbiBwb3NpdGlvbiBrZXlzKS5cbiAgMy4gcmVuZGVyIGN1cnJlbnQgbm9kZSB0ZW1wbGF0ZSB3aXRoIGluc2V0aW9uIHBvc2l0aW9uIGNvbnRlbnQuXG4gIDQuIGNvbnRpbnVlIHByb2Nlc3NpbmcgZXhlY3V0aW9uIGNoYWluIChwb3N0LXByb2Nlc3NvciBvZiByZXN1bHQgY29uY2VwdClcblxuICBTZXJ2ZXItc2lkZSB0ZW1wbGF0ZSBzeXN0ZW0gKHJ1bi10aW1lIHN1YnN0aXR1dGlvbiBoYXBwZW5zIG9uIHRoZSB3ZWIgc2VydmVyKTogXG4gICAgLSBUZW1wbGF0ZSByZXNvdXJjZTogdGVtcGxhdGUgZmlsZSB3aXRoIGluc2VydGlvbiBwb2ludHMuXG4gICAgLSBDb250ZW50IHJlc291cmNlICh0ZW1wbGF0ZSBwYXJ0cyk6IEFyZ3VtbmV0cyBwYXNzZWQgdG8gdGhlIHBhcnNlZCB0ZW1wbGF0ZSBmdW5jdGlvbi4gXG4gICAgLSBUZW1wbGF0ZSBlbmdpbmUvcHJvY2Vzc2luZy9yZW5kZW5pbmcgZWxlbWVudC9tb2R1bGU6IHVuZGVyc2NvcmUudGVtcGxhdGUgXG5cbiAgc2VydmVyLXNpZGUgamF2YXNjcmlwdCB0aGF0IGlzIGxvY2F0ZWQgaW4gdGhlIHRlbXBsYXRlcywgaXMgZXhlY3V0ZWQuIFJlbmRlcmluZyB0ZW1wbGF0ZSByZXF1aXJlcyBhbiBvYmplY3Qgb2YgZnVuY3Rpb25zIGZvciBlYWNoIGluc2V0aW9uIHBvc2l0aW9uIGtleS5cbiAgV2hlcmU6XG4gICAgLSBpbnNlcnQgb2JqZWN0IGZ1bmN0aW9ucyBhcmUgY2FsbGVkIGFuZCBleHBlY3QgdG8gcmV0dXJuIGEgc3RyaW5nLiBGdW5jdGlvbnMgcmVwcmVzZW50LSB0aGUgYWxnb3JpdGhtcyB1c2VkIHRvIGRlYWwgd2l0aCBjb250ZW50IHZhbHVlIGFuZCBhZGQgaXQgdG8gdGhlIGRvY3VtZW50IGluIGEgc3BlY2lmaWMgcG9zaXRpb24sXG4gICAgICB3aGljaCB3aWxsIHJlY2VpdmUgdGhlIHBhcmFtZXRlcnMgdGhhdCBjYW4gY2hhbmdlIGl0J3MgYmVoYXZpb3IuIFVzaW5nIGEgZnVuY3Rpb24gYWxsb3dzIGZvciBjcmVhdGluZyBzcGVjaWZpYyBsb2dpYyBmb3IgZWFjaCBpbnNldGlvbiBwb2ludC5cbiAgICAtIEVhY2ggaW5zZXJ0aW9uIHBvc2l0aW9uIGlzIGRpc3Rpbmd1aXNoZWQgYnkgdGhlIGtleXMgb2YgdGhlIGluc2VydCBvYmplY3QuIFxuICAgIC0gQ29udGVudCB2YWx1ZSAoU3RyaW5nIHwgQXJyYXkgfCBPYmplY3QpIC0gd2hpY2ggaW5zZXJ0IGZ1bmN0aW9uIGlzIGluaXRpYWxpemVkIHdpdGgsIGFuZCBoYW5kbGVzIGl0LiBcblxuICAvLyBUT0RPOiBkZWFsIHdpdGggd3JhcHBpbmcgbGF5b3V0cyBlLmcuIGxheW91dEVsZW1lbnQ6ICd3ZWJhcHAtbGF5b3V0LWxpc3QnXG4gKi9cbmV4cG9ydCBhc3luYyBmdW5jdGlvbiB0ZW1wbGF0ZVJlbmRlcmluZ1dpdGhJbnNlcml0b25Qb3NpdGlvbih7IHN0YWdlTm9kZSwgcHJvY2Vzc05vZGUsIGdyYXBoID0gdGhpcywgbmV4dFByb2Nlc3NEYXRhIH0sIHsgYWRkaXRpb25hbFBhcmFtZXRlciwgdHJhdmVyc2VDYWxsQ29udGV4dCB9KSB7XG4gIC8vIGxldCBjb250ZXh0ID0gZ3JhcGguY29udGV4dC5taWRkbGV3YXJlUGFyYW1ldGVyLmNvbnRleHRcblxuICAvKipcbiAgICAxLiBSZXNvbHZlIHJlc291cmNlIEZpbGUgPT4gZmlsZVBhdGhcbiAgICAyLiB1bmRlcnNjb3JlLnRlbXBsYXRlKDxmaWxlUGF0aD4pXG4gICAgMy4gcmVuZGVyIHRlbXBsYXRlIHdpdGggbmVzdGVkIG5vZGVzIHJlc3VsdHMuXG4gICAgNC4gcG9zdCBwcm9jZXNzaW5nIChleGVjdXRpb24gY2hhaW4gY29uY2VwdClcbiAgKi9cbiAgbGV0IGZpbGVQYXRoID0gYXdhaXQgZ3JhcGgudHJhdmVyc2VySW5zdHJ1Y3Rpb24ucmVzb3VyY2VSZXNvbHV0aW9uLnJlc29sdmVSZXNvdXJjZSh7IHRhcmdldE5vZGU6IHByb2Nlc3NOb2RlLCBncmFwaCwgY29udGV4dFByb3BlcnR5TmFtZTogJ2ZpbGVDb250ZXh0JyB9KVxuICBsZXQgZmlsZUNvbnRlbnQgPSBhd2FpdCBmaWxlc3lzdGVtLnJlYWRGaWxlU3luYyhmaWxlUGF0aCwgJ3V0Zi04JylcbiAgbGV0IHBhcnNlZFRlbXBsYXRlID0gdW5kZXJzY29yZS50ZW1wbGF0ZShmaWxlQ29udGVudClcblxuICAvLyByZWR1Y2UgYXJyYXkgZm9yIGV2ZXJ5IG5lc3RlZCBvYmplY3Q6XG4gIGNvbnN0IGluc2VydGlvbkFsZ29yaXRobSA9IGNvbnRlbnQgPT4gKCkgPT4gY29udGVudCAvLyBUT0RPOiBhbGxvdyBmb3IgaW5zZXJ0aW9uIHBvaW50cyB0byBwYXNzIHBhcmFtZXRlcnMgdGhhdCBhZmZlY3QgdGhlIGluc2VydGVkIHZhbHVlcy5cbiAgbGV0IGluc2VydCA9IHt9XG4gIGZvciAobGV0IGtleSBpbiBuZXh0UHJvY2Vzc0RhdGEgLyoqIE9iamVjdCBvZiBhcnJheXMgKi8pIGluc2VydFtrZXldID0gaW5zZXJ0aW9uQWxnb3JpdGhtKG5leHRQcm9jZXNzRGF0YVtrZXldLmpvaW4oJycpKVxuXG4gIGxldCByZW5kZXJlZERvY3VtZW50ID0gcGFyc2VkVGVtcGxhdGUoeyBpbnNlcnQsIGFyZ3VtZW50OiB7fSB9KVxuICByZXR1cm4gcmVuZGVyZWREb2N1bWVudFxufVxuIl19

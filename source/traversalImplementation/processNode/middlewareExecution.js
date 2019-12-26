@@ -1,22 +1,23 @@
-import assert from 'assert'
+"use strict";var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports, "__esModule", { value: true });exports.immediatelyExecuteMiddleware = void 0;var _assert = _interopRequireDefault(require("assert"));
 
-/*
-  Immediately execute middleware
-  Note: Check graphInterception method "handleMiddlewareNextCall"
-*/
-export const immediatelyExecuteMiddleware = async function({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
-  const { nextFunction } = additionalParameter
-  assert(graph.context.middlewareParameter?.context, `• Middleware graph traversal relies on context.middlewareParameter.context on the graph context instance`)
 
-  let functionCallback = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'functionReferenceContext' })
+
+
+
+const immediatelyExecuteMiddleware = async function ({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {var _graph$context$middle;
+  const { nextFunction } = additionalParameter;
+  (0, _assert.default)((_graph$context$middle = graph.context.middlewareParameter) === null || _graph$context$middle === void 0 ? void 0 : _graph$context$middle.context, `• Middleware graph traversal relies on context.middlewareParameter.context on the graph context instance`);
+
+  let functionCallback = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'functionReferenceContext' });
 
   try {
-    let middleware = await functionCallback({ node: processNode, graph }) // expected to return a Koa middleware complying function.
+    let middleware = await functionCallback({ node: processNode, graph });
     let context = graph.context.middlewareParameter.context,
-      next = nextFunction
-    await middleware(context, next) // execute middleware
-    return middleware // allow to aggregate middleware function for debugging purposes.
+    next = nextFunction;
+    await middleware(context, next);
+    return middleware;
   } catch (error) {
-    console.error(error) && process.exit()
+    console.error(error) && process.exit();
   }
-}
+};exports.immediatelyExecuteMiddleware = immediatelyExecuteMiddleware;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9wcm9jZXNzTm9kZS9taWRkbGV3YXJlRXhlY3V0aW9uLmpzIl0sIm5hbWVzIjpbImltbWVkaWF0ZWx5RXhlY3V0ZU1pZGRsZXdhcmUiLCJzdGFnZU5vZGUiLCJwcm9jZXNzTm9kZSIsImdyYXBoIiwibmV4dFByb2Nlc3NEYXRhIiwiYWRkaXRpb25hbFBhcmFtZXRlciIsInRyYXZlcnNlQ2FsbENvbnRleHQiLCJuZXh0RnVuY3Rpb24iLCJjb250ZXh0IiwibWlkZGxld2FyZVBhcmFtZXRlciIsImZ1bmN0aW9uQ2FsbGJhY2siLCJ0cmF2ZXJzZXJJbnN0cnVjdGlvbiIsInJlc291cmNlUmVzb2x1dGlvbiIsInJlc29sdmVSZXNvdXJjZSIsInRhcmdldE5vZGUiLCJjb250ZXh0UHJvcGVydHlOYW1lIiwibWlkZGxld2FyZSIsIm5vZGUiLCJuZXh0IiwiZXJyb3IiLCJjb25zb2xlIiwicHJvY2VzcyIsImV4aXQiXSwibWFwcGluZ3MiOiI4TUFBQTs7Ozs7O0FBTU8sTUFBTUEsNEJBQTRCLEdBQUcsZ0JBQWUsRUFBRUMsU0FBRixFQUFhQyxXQUFiLEVBQTBCQyxLQUFLLEdBQUcsSUFBbEMsRUFBd0NDLGVBQXhDLEVBQWYsRUFBMEUsRUFBRUMsbUJBQUYsRUFBdUJDLG1CQUF2QixFQUExRSxFQUF3SDtBQUNsSyxRQUFNLEVBQUVDLFlBQUYsS0FBbUJGLG1CQUF6QjtBQUNBLGdEQUFPRixLQUFLLENBQUNLLE9BQU4sQ0FBY0MsbUJBQXJCLDBEQUFPLHNCQUFtQ0QsT0FBMUMsRUFBb0QsMEdBQXBEOztBQUVBLE1BQUlFLGdCQUFnQixHQUFHLE1BQU1QLEtBQUssQ0FBQ1Esb0JBQU4sQ0FBMkJDLGtCQUEzQixDQUE4Q0MsZUFBOUMsQ0FBOEQsRUFBRUMsVUFBVSxFQUFFWixXQUFkLEVBQTJCQyxLQUEzQixFQUFrQ1ksbUJBQW1CLEVBQUUsMEJBQXZELEVBQTlELENBQTdCOztBQUVBLE1BQUk7QUFDRixRQUFJQyxVQUFVLEdBQUcsTUFBTU4sZ0JBQWdCLENBQUMsRUFBRU8sSUFBSSxFQUFFZixXQUFSLEVBQXFCQyxLQUFyQixFQUFELENBQXZDO0FBQ0EsUUFBSUssT0FBTyxHQUFHTCxLQUFLLENBQUNLLE9BQU4sQ0FBY0MsbUJBQWQsQ0FBa0NELE9BQWhEO0FBQ0VVLElBQUFBLElBQUksR0FBR1gsWUFEVDtBQUVBLFVBQU1TLFVBQVUsQ0FBQ1IsT0FBRCxFQUFVVSxJQUFWLENBQWhCO0FBQ0EsV0FBT0YsVUFBUDtBQUNELEdBTkQsQ0FNRSxPQUFPRyxLQUFQLEVBQWM7QUFDZEMsSUFBQUEsT0FBTyxDQUFDRCxLQUFSLENBQWNBLEtBQWQsS0FBd0JFLE9BQU8sQ0FBQ0MsSUFBUixFQUF4QjtBQUNEO0FBQ0YsQ0FmTSxDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGFzc2VydCBmcm9tICdhc3NlcnQnXG5cbi8qXG4gIEltbWVkaWF0ZWx5IGV4ZWN1dGUgbWlkZGxld2FyZVxuICBOb3RlOiBDaGVjayBncmFwaEludGVyY2VwdGlvbiBtZXRob2QgXCJoYW5kbGVNaWRkbGV3YXJlTmV4dENhbGxcIlxuKi9cbmV4cG9ydCBjb25zdCBpbW1lZGlhdGVseUV4ZWN1dGVNaWRkbGV3YXJlID0gYXN5bmMgZnVuY3Rpb24oeyBzdGFnZU5vZGUsIHByb2Nlc3NOb2RlLCBncmFwaCA9IHRoaXMsIG5leHRQcm9jZXNzRGF0YSB9LCB7IGFkZGl0aW9uYWxQYXJhbWV0ZXIsIHRyYXZlcnNlQ2FsbENvbnRleHQgfSkge1xuICBjb25zdCB7IG5leHRGdW5jdGlvbiB9ID0gYWRkaXRpb25hbFBhcmFtZXRlclxuICBhc3NlcnQoZ3JhcGguY29udGV4dC5taWRkbGV3YXJlUGFyYW1ldGVyPy5jb250ZXh0LCBg4oCiIE1pZGRsZXdhcmUgZ3JhcGggdHJhdmVyc2FsIHJlbGllcyBvbiBjb250ZXh0Lm1pZGRsZXdhcmVQYXJhbWV0ZXIuY29udGV4dCBvbiB0aGUgZ3JhcGggY29udGV4dCBpbnN0YW5jZWApXG5cbiAgbGV0IGZ1bmN0aW9uQ2FsbGJhY2sgPSBhd2FpdCBncmFwaC50cmF2ZXJzZXJJbnN0cnVjdGlvbi5yZXNvdXJjZVJlc29sdXRpb24ucmVzb2x2ZVJlc291cmNlKHsgdGFyZ2V0Tm9kZTogcHJvY2Vzc05vZGUsIGdyYXBoLCBjb250ZXh0UHJvcGVydHlOYW1lOiAnZnVuY3Rpb25SZWZlcmVuY2VDb250ZXh0JyB9KVxuXG4gIHRyeSB7XG4gICAgbGV0IG1pZGRsZXdhcmUgPSBhd2FpdCBmdW5jdGlvbkNhbGxiYWNrKHsgbm9kZTogcHJvY2Vzc05vZGUsIGdyYXBoIH0pIC8vIGV4cGVjdGVkIHRvIHJldHVybiBhIEtvYSBtaWRkbGV3YXJlIGNvbXBseWluZyBmdW5jdGlvbi5cbiAgICBsZXQgY29udGV4dCA9IGdyYXBoLmNvbnRleHQubWlkZGxld2FyZVBhcmFtZXRlci5jb250ZXh0LFxuICAgICAgbmV4dCA9IG5leHRGdW5jdGlvblxuICAgIGF3YWl0IG1pZGRsZXdhcmUoY29udGV4dCwgbmV4dCkgLy8gZXhlY3V0ZSBtaWRkbGV3YXJlXG4gICAgcmV0dXJuIG1pZGRsZXdhcmUgLy8gYWxsb3cgdG8gYWdncmVnYXRlIG1pZGRsZXdhcmUgZnVuY3Rpb24gZm9yIGRlYnVnZ2luZyBwdXJwb3Nlcy5cbiAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICBjb25zb2xlLmVycm9yKGVycm9yKSAmJiBwcm9jZXNzLmV4aXQoKVxuICB9XG59XG4iXX0=
