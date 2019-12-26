@@ -4,7 +4,7 @@ import assert from 'assert'
   Immediately execute middleware
   Note: Check graphInterception method "handleMiddlewareNextCall"
 */
-export const immediatelyExecuteMiddleware = async ({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) => {
+export const immediatelyExecuteMiddleware = async function({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
   const { nextFunction } = additionalParameter
   assert(graph.context.middlewareParameter?.context, `• Middleware graph traversal relies on context.middlewareParameter.context on the graph context instance`)
 
