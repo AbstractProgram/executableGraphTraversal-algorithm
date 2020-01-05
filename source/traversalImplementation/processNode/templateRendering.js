@@ -4,6 +4,7 @@ import underscore from 'underscore'
 import filesystem from 'fs'
 
 /**
+  Each template subgraph represents a document, which is a collection os templates and configs rendered together.
  * @return {String} String of rendered HTML document content.
  Underscore templating options - https://2ality.com/2012/06/underscore-templates.html
 
@@ -24,26 +25,32 @@ import filesystem from 'fs'
     - Each insertion position is distinguished by the keys of the insert object. 
     - Content value (String | Array | Object) - which insert function is initialized with, and handles it. 
 
-  // TODO: deal with wrapping layouts e.g. layoutElement: 'webapp-layout-list'
+
+  1. Resolve resource File => filePath
+  2. underscore.template(<filePath>)
+  3. render template with nested nodes results.
+  4. post processing (execution chain concept)
  */
 export async function templateRenderingWithInseritonPosition({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
-  // let context = graph.context.middlewareParameter.context
+  assert(graph.context.templateParameter, `• Template/Document graph traversal relies on context.templateParameter on the graph context instance`)
+  let argument = graph.context.templateParameter
 
-  /**
-    1. Resolve resource File => filePath
-    2. underscore.template(<filePath>)
-    3. render template with nested nodes results.
-    4. post processing (execution chain concept)
-  */
-  let filePath = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'fileContext' })
+  let resource = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'fileContext' })
+
+  let filePath
+  // @param TraverserState <Object> - Passing a single traverser state, allows for easier changes/refactoring to be made.
+  if (typeof resource == 'function') filePath = await resource({ node: processNode, graph })
+  else filePath = resource
   let fileContent = await filesystem.readFileSync(filePath, 'utf-8')
+
   let parsedTemplate = underscore.template(fileContent)
 
-  // reduce array for every nested object:
-  const insertionAlgorithm = content => () => content // TODO: allow for insertion points to pass parameters that affect the inserted values.
-  let insert = {}
-  for (let key in nextProcessData /** Object of arrays */) insert[key] = insertionAlgorithm(nextProcessData[key].join(''))
+  const insertionAlgorithm = contentList => (/*parameterPassedFromWithinTemplateJSParts*/) => contentList.join('') // TODO: allow for insertion points to pass parameters that affect the inserted values.
 
-  let renderedDocument = parsedTemplate({ insert, argument: {} })
+  // reduce array for every nested object:
+  let insert = {} // insert
+  for (let key in nextProcessData /** Object of arrays */) insert[key] = insertionAlgorithm(nextProcessData[key] /*Array of contents relating to port groupKey*/)
+
+  let renderedDocument = parsedTemplate({ insert, argument })
   return renderedDocument
 }

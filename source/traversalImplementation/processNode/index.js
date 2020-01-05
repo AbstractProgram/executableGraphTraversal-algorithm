@@ -40,6 +40,7 @@ export async function executeFunctionReference({ stageNode, processNode, graph =
   let functionCallback = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'functionReferenceContext' })
 
   try {
+    // Pass parameter object of traverserState
     return await functionCallback({ node: processNode, context: graph.context, graph, traverseCallContext })
   } catch (error) {
     console.error(error) && process.exit()
