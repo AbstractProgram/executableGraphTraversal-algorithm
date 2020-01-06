@@ -1,48 +1,49 @@
-export * from './scriptExecution.js'
-export * from './middlewareExecution.js'
-export * from './templateRendering.js'
-export * from './schema.js'
+"use strict";Object.defineProperty(exports, "__esModule", { value: true });var _exportNames = { returnDataItemKey: true, timeout: true, executeFunctionReference: true };exports.returnDataItemKey = returnDataItemKey;exports.timeout = timeout;exports.executeFunctionReference = executeFunctionReference;var _scriptExecution = require("./scriptExecution.js");Object.keys(_scriptExecution).forEach(function (key) {if (key === "default" || key === "__esModule") return;if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;Object.defineProperty(exports, key, { enumerable: true, get: function () {return _scriptExecution[key];} });});
+var _middlewareExecution = require("./middlewareExecution.js");Object.keys(_middlewareExecution).forEach(function (key) {if (key === "default" || key === "__esModule") return;if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;Object.defineProperty(exports, key, { enumerable: true, get: function () {return _middlewareExecution[key];} });});
+var _templateRendering = require("./templateRendering.js");Object.keys(_templateRendering).forEach(function (key) {if (key === "default" || key === "__esModule") return;if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;Object.defineProperty(exports, key, { enumerable: true, get: function () {return _templateRendering[key];} });});
+var _schema = require("./schema.js");Object.keys(_schema).forEach(function (key) {if (key === "default" || key === "__esModule") return;if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;Object.defineProperty(exports, key, { enumerable: true, get: function () {return _schema[key];} });});
 
-import path from 'path'
-import assert from 'assert'
 
-export async function returnDataItemKey({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
-  if (processNode.properties?.name) return `${processNode.properties?.name}`
+
+
+async function returnDataItemKey({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {var _processNode$properti, _processNode$properti2;
+  if ((_processNode$properti = processNode.properties) === null || _processNode$properti === void 0 ? void 0 : _processNode$properti.name) return `${(_processNode$properti2 = processNode.properties) === null || _processNode$properti2 === void 0 ? void 0 : _processNode$properti2.name}`;
 }
 
-// implementation delays promises for testing `iterateConnection` of promises e.g. `allPromise`, `raceFirstPromise`, etc.
-export async function timeout({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
-  if (typeof processNode.properties?.timerDelay != 'number') throw new Error('• DataItem must have a delay value.')
-  let delay = processNode.properties?.timerDelay
+
+async function timeout({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {var _processNode$properti3, _processNode$properti4;
+  if (typeof ((_processNode$properti3 = processNode.properties) === null || _processNode$properti3 === void 0 ? void 0 : _processNode$properti3.timerDelay) != 'number') throw new Error('• DataItem must have a delay value.');
+  let delay = (_processNode$properti4 = processNode.properties) === null || _processNode$properti4 === void 0 ? void 0 : _processNode$properti4.timerDelay;
   return await new Promise((resolve, reject) =>
-    setTimeout(() => {
-      // console.log(`${delay}ms passed for key ${processNode.key}.`) // debug
-      resolve(processNode.properties?.name)
-    }, delay),
-  )
+  setTimeout(() => {var _processNode$properti5;
+
+    resolve((_processNode$properti5 = processNode.properties) === null || _processNode$properti5 === void 0 ? void 0 : _processNode$properti5.name);
+  }, delay));
+
 }
 
-/**
- * Relies on function reference concept - where a function is called from the graph using a node property that holds it's name, and a context object passed to the graph traverser, holding the functions map.
- * `processData` implementation of `graphTraversal` module
- * execute functions through a string reference from the graph database that match the key of the application reference context object
- * Note: creating a similar implementation that would return only the functions is no different than returnning the names of the function, and then use the graph result array outside the traversal to retrieve the function references from an object.
 
-Used for:
-  - used for executing tasks and checks/conditions
-  - Middleware:
-    Approaches for middleware aggregation: 
-    - Creates middleware array from graph-  The graph traversal @return {Array of Objects} where each object contains instruction settings to be used through an implementing module to add to a chain of middlewares. 
-    - return middleware reference names, and then matching the names to function outside the traversal.
-    - Executing generator functions with node arguments that produce middleware functions.
- */
-export async function executeFunctionReference({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
-  let functionCallback = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'functionReferenceContext' })
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function executeFunctionReference({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
+  let functionCallback = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'functionReferenceContext' });
 
   try {
-    // Pass parameter object of traverserState
-    return await functionCallback({ node: processNode, context: graph.context, graph, traverseCallContext })
+
+    return await functionCallback({ node: processNode, context: graph.context, graph, traverseCallContext });
   } catch (error) {
-    console.error(error) && process.exit()
+    console.error(error) && process.exit();
   }
 }
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9wcm9jZXNzTm9kZS9pbmRleC5qcyJdLCJuYW1lcyI6WyJyZXR1cm5EYXRhSXRlbUtleSIsInN0YWdlTm9kZSIsInByb2Nlc3NOb2RlIiwiZ3JhcGgiLCJuZXh0UHJvY2Vzc0RhdGEiLCJhZGRpdGlvbmFsUGFyYW1ldGVyIiwidHJhdmVyc2VDYWxsQ29udGV4dCIsInByb3BlcnRpZXMiLCJuYW1lIiwidGltZW91dCIsInRpbWVyRGVsYXkiLCJFcnJvciIsImRlbGF5IiwiUHJvbWlzZSIsInJlc29sdmUiLCJyZWplY3QiLCJzZXRUaW1lb3V0IiwiZXhlY3V0ZUZ1bmN0aW9uUmVmZXJlbmNlIiwiZnVuY3Rpb25DYWxsYmFjayIsInRyYXZlcnNlckluc3RydWN0aW9uIiwicmVzb3VyY2VSZXNvbHV0aW9uIiwicmVzb2x2ZVJlc291cmNlIiwidGFyZ2V0Tm9kZSIsImNvbnRleHRQcm9wZXJ0eU5hbWUiLCJub2RlIiwiY29udGV4dCIsImVycm9yIiwiY29uc29sZSIsInByb2Nlc3MiLCJleGl0Il0sIm1hcHBpbmdzIjoiNlNBQUE7QUFDQTtBQUNBO0FBQ0E7Ozs7O0FBS08sZUFBZUEsaUJBQWYsQ0FBaUMsRUFBRUMsU0FBRixFQUFhQyxXQUFiLEVBQTBCQyxLQUFLLEdBQUcsSUFBbEMsRUFBd0NDLGVBQXhDLEVBQWpDLEVBQTRGLEVBQUVDLG1CQUFGLEVBQXVCQyxtQkFBdkIsRUFBNUYsRUFBMEk7QUFDL0ksK0JBQUlKLFdBQVcsQ0FBQ0ssVUFBaEIsMERBQUksc0JBQXdCQyxJQUE1QixFQUFrQyxPQUFRLEdBQUQsMEJBQUdOLFdBQVcsQ0FBQ0ssVUFBZiwyREFBRyx1QkFBd0JDLElBQUssRUFBdkM7QUFDbkM7OztBQUdNLGVBQWVDLE9BQWYsQ0FBdUIsRUFBRVIsU0FBRixFQUFhQyxXQUFiLEVBQTBCQyxLQUFLLEdBQUcsSUFBbEMsRUFBd0NDLGVBQXhDLEVBQXZCLEVBQWtGLEVBQUVDLG1CQUFGLEVBQXVCQyxtQkFBdkIsRUFBbEYsRUFBZ0k7QUFDckksTUFBSSxrQ0FBT0osV0FBVyxDQUFDSyxVQUFuQiwyREFBTyx1QkFBd0JHLFVBQS9CLEtBQTZDLFFBQWpELEVBQTJELE1BQU0sSUFBSUMsS0FBSixDQUFVLHFDQUFWLENBQU47QUFDM0QsTUFBSUMsS0FBSyw2QkFBR1YsV0FBVyxDQUFDSyxVQUFmLDJEQUFHLHVCQUF3QkcsVUFBcEM7QUFDQSxTQUFPLE1BQU0sSUFBSUcsT0FBSixDQUFZLENBQUNDLE9BQUQsRUFBVUMsTUFBVjtBQUN2QkMsRUFBQUEsVUFBVSxDQUFDLE1BQU07O0FBRWZGLElBQUFBLE9BQU8sMkJBQUNaLFdBQVcsQ0FBQ0ssVUFBYiwyREFBQyx1QkFBd0JDLElBQXpCLENBQVA7QUFDRCxHQUhTLEVBR1BJLEtBSE8sQ0FEQyxDQUFiOztBQU1EOzs7Ozs7Ozs7Ozs7Ozs7O0FBZ0JNLGVBQWVLLHdCQUFmLENBQXdDLEVBQUVoQixTQUFGLEVBQWFDLFdBQWIsRUFBMEJDLEtBQUssR0FBRyxJQUFsQyxFQUF3Q0MsZUFBeEMsRUFBeEMsRUFBbUcsRUFBRUMsbUJBQUYsRUFBdUJDLG1CQUF2QixFQUFuRyxFQUFpSjtBQUN0SixNQUFJWSxnQkFBZ0IsR0FBRyxNQUFNZixLQUFLLENBQUNnQixvQkFBTixDQUEyQkMsa0JBQTNCLENBQThDQyxlQUE5QyxDQUE4RCxFQUFFQyxVQUFVLEVBQUVwQixXQUFkLEVBQTJCQyxLQUEzQixFQUFrQ29CLG1CQUFtQixFQUFFLDBCQUF2RCxFQUE5RCxDQUE3Qjs7QUFFQSxNQUFJOztBQUVGLFdBQU8sTUFBTUwsZ0JBQWdCLENBQUMsRUFBRU0sSUFBSSxFQUFFdEIsV0FBUixFQUFxQnVCLE9BQU8sRUFBRXRCLEtBQUssQ0FBQ3NCLE9BQXBDLEVBQTZDdEIsS0FBN0MsRUFBb0RHLG1CQUFwRCxFQUFELENBQTdCO0FBQ0QsR0FIRCxDQUdFLE9BQU9vQixLQUFQLEVBQWM7QUFDZEMsSUFBQUEsT0FBTyxDQUFDRCxLQUFSLENBQWNBLEtBQWQsS0FBd0JFLE9BQU8sQ0FBQ0MsSUFBUixFQUF4QjtBQUNEO0FBQ0YiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgKiBmcm9tICcuL3NjcmlwdEV4ZWN1dGlvbi5qcydcbmV4cG9ydCAqIGZyb20gJy4vbWlkZGxld2FyZUV4ZWN1dGlvbi5qcydcbmV4cG9ydCAqIGZyb20gJy4vdGVtcGxhdGVSZW5kZXJpbmcuanMnXG5leHBvcnQgKiBmcm9tICcuL3NjaGVtYS5qcydcblxuaW1wb3J0IHBhdGggZnJvbSAncGF0aCdcbmltcG9ydCBhc3NlcnQgZnJvbSAnYXNzZXJ0J1xuXG5leHBvcnQgYXN5bmMgZnVuY3Rpb24gcmV0dXJuRGF0YUl0ZW1LZXkoeyBzdGFnZU5vZGUsIHByb2Nlc3NOb2RlLCBncmFwaCA9IHRoaXMsIG5leHRQcm9jZXNzRGF0YSB9LCB7IGFkZGl0aW9uYWxQYXJhbWV0ZXIsIHRyYXZlcnNlQ2FsbENvbnRleHQgfSkge1xuICBpZiAocHJvY2Vzc05vZGUucHJvcGVydGllcz8ubmFtZSkgcmV0dXJuIGAke3Byb2Nlc3NOb2RlLnByb3BlcnRpZXM/Lm5hbWV9YFxufVxuXG4vLyBpbXBsZW1lbnRhdGlvbiBkZWxheXMgcHJvbWlzZXMgZm9yIHRlc3RpbmcgYGl0ZXJhdGVDb25uZWN0aW9uYCBvZiBwcm9taXNlcyBlLmcuIGBhbGxQcm9taXNlYCwgYHJhY2VGaXJzdFByb21pc2VgLCBldGMuXG5leHBvcnQgYXN5bmMgZnVuY3Rpb24gdGltZW91dCh7IHN0YWdlTm9kZSwgcHJvY2Vzc05vZGUsIGdyYXBoID0gdGhpcywgbmV4dFByb2Nlc3NEYXRhIH0sIHsgYWRkaXRpb25hbFBhcmFtZXRlciwgdHJhdmVyc2VDYWxsQ29udGV4dCB9KSB7XG4gIGlmICh0eXBlb2YgcHJvY2Vzc05vZGUucHJvcGVydGllcz8udGltZXJEZWxheSAhPSAnbnVtYmVyJykgdGhyb3cgbmV3IEVycm9yKCfigKIgRGF0YUl0ZW0gbXVzdCBoYXZlIGEgZGVsYXkgdmFsdWUuJylcbiAgbGV0IGRlbGF5ID0gcHJvY2Vzc05vZGUucHJvcGVydGllcz8udGltZXJEZWxheVxuICByZXR1cm4gYXdhaXQgbmV3IFByb21pc2UoKHJlc29sdmUsIHJlamVjdCkgPT5cbiAgICBzZXRUaW1lb3V0KCgpID0+IHtcbiAgICAgIC8vIGNvbnNvbGUubG9nKGAke2RlbGF5fW1zIHBhc3NlZCBmb3Iga2V5ICR7cHJvY2Vzc05vZGUua2V5fS5gKSAvLyBkZWJ1Z1xuICAgICAgcmVzb2x2ZShwcm9jZXNzTm9kZS5wcm9wZXJ0aWVzPy5uYW1lKVxuICAgIH0sIGRlbGF5KSxcbiAgKVxufVxuXG4vKipcbiAqIFJlbGllcyBvbiBmdW5jdGlvbiByZWZlcmVuY2UgY29uY2VwdCAtIHdoZXJlIGEgZnVuY3Rpb24gaXMgY2FsbGVkIGZyb20gdGhlIGdyYXBoIHVzaW5nIGEgbm9kZSBwcm9wZXJ0eSB0aGF0IGhvbGRzIGl0J3MgbmFtZSwgYW5kIGEgY29udGV4dCBvYmplY3QgcGFzc2VkIHRvIHRoZSBncmFwaCB0cmF2ZXJzZXIsIGhvbGRpbmcgdGhlIGZ1bmN0aW9ucyBtYXAuXG4gKiBgcHJvY2Vzc0RhdGFgIGltcGxlbWVudGF0aW9uIG9mIGBncmFwaFRyYXZlcnNhbGAgbW9kdWxlXG4gKiBleGVjdXRlIGZ1bmN0aW9ucyB0aHJvdWdoIGEgc3RyaW5nIHJlZmVyZW5jZSBmcm9tIHRoZSBncmFwaCBkYXRhYmFzZSB0aGF0IG1hdGNoIHRoZSBrZXkgb2YgdGhlIGFwcGxpY2F0aW9uIHJlZmVyZW5jZSBjb250ZXh0IG9iamVjdFxuICogTm90ZTogY3JlYXRpbmcgYSBzaW1pbGFyIGltcGxlbWVudGF0aW9uIHRoYXQgd291bGQgcmV0dXJuIG9ubHkgdGhlIGZ1bmN0aW9ucyBpcyBubyBkaWZmZXJlbnQgdGhhbiByZXR1cm5uaW5nIHRoZSBuYW1lcyBvZiB0aGUgZnVuY3Rpb24sIGFuZCB0aGVuIHVzZSB0aGUgZ3JhcGggcmVzdWx0IGFycmF5IG91dHNpZGUgdGhlIHRyYXZlcnNhbCB0byByZXRyaWV2ZSB0aGUgZnVuY3Rpb24gcmVmZXJlbmNlcyBmcm9tIGFuIG9iamVjdC5cblxuVXNlZCBmb3I6XG4gIC0gdXNlZCBmb3IgZXhlY3V0aW5nIHRhc2tzIGFuZCBjaGVja3MvY29uZGl0aW9uc1xuICAtIE1pZGRsZXdhcmU6XG4gICAgQXBwcm9hY2hlcyBmb3IgbWlkZGxld2FyZSBhZ2dyZWdhdGlvbjogXG4gICAgLSBDcmVhdGVzIG1pZGRsZXdhcmUgYXJyYXkgZnJvbSBncmFwaC0gIFRoZSBncmFwaCB0cmF2ZXJzYWwgQHJldHVybiB7QXJyYXkgb2YgT2JqZWN0c30gd2hlcmUgZWFjaCBvYmplY3QgY29udGFpbnMgaW5zdHJ1Y3Rpb24gc2V0dGluZ3MgdG8gYmUgdXNlZCB0aHJvdWdoIGFuIGltcGxlbWVudGluZyBtb2R1bGUgdG8gYWRkIHRvIGEgY2hhaW4gb2YgbWlkZGxld2FyZXMuIFxuICAgIC0gcmV0dXJuIG1pZGRsZXdhcmUgcmVmZXJlbmNlIG5hbWVzLCBhbmQgdGhlbiBtYXRjaGluZyB0aGUgbmFtZXMgdG8gZnVuY3Rpb24gb3V0c2lkZSB0aGUgdHJhdmVyc2FsLlxuICAgIC0gRXhlY3V0aW5nIGdlbmVyYXRvciBmdW5jdGlvbnMgd2l0aCBub2RlIGFyZ3VtZW50cyB0aGF0IHByb2R1Y2UgbWlkZGxld2FyZSBmdW5jdGlvbnMuXG4gKi9cbmV4cG9ydCBhc3luYyBmdW5jdGlvbiBleGVjdXRlRnVuY3Rpb25SZWZlcmVuY2UoeyBzdGFnZU5vZGUsIHByb2Nlc3NOb2RlLCBncmFwaCA9IHRoaXMsIG5leHRQcm9jZXNzRGF0YSB9LCB7IGFkZGl0aW9uYWxQYXJhbWV0ZXIsIHRyYXZlcnNlQ2FsbENvbnRleHQgfSkge1xuICBsZXQgZnVuY3Rpb25DYWxsYmFjayA9IGF3YWl0IGdyYXBoLnRyYXZlcnNlckluc3RydWN0aW9uLnJlc291cmNlUmVzb2x1dGlvbi5yZXNvbHZlUmVzb3VyY2UoeyB0YXJnZXROb2RlOiBwcm9jZXNzTm9kZSwgZ3JhcGgsIGNvbnRleHRQcm9wZXJ0eU5hbWU6ICdmdW5jdGlvblJlZmVyZW5jZUNvbnRleHQnIH0pXG5cbiAgdHJ5IHtcbiAgICAvLyBQYXNzIHBhcmFtZXRlciBvYmplY3Qgb2YgdHJhdmVyc2VyU3RhdGVcbiAgICByZXR1cm4gYXdhaXQgZnVuY3Rpb25DYWxsYmFjayh7IG5vZGU6IHByb2Nlc3NOb2RlLCBjb250ZXh0OiBncmFwaC5jb250ZXh0LCBncmFwaCwgdHJhdmVyc2VDYWxsQ29udGV4dCB9KVxuICB9IGNhdGNoIChlcnJvcikge1xuICAgIGNvbnNvbGUuZXJyb3IoZXJyb3IpICYmIHByb2Nlc3MuZXhpdCgpXG4gIH1cbn1cbiJdfQ==
