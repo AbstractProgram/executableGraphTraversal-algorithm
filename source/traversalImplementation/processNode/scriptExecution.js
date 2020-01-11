@@ -3,14 +3,14 @@ import assert from 'assert'
 import { exec, execSync, spawn, spawnSync } from 'child_process'
 
 // Execute task script in the same process (nodejs childprocess.execSync) using a reference scriptPath property. -  Relies on function reference concept.
-export async function executeShellscriptFile({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
+export async function executeShellscriptFile({ stageNode, processNode, traverser = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
   let message = ` _____                          _        
   | ____|__  __ ___   ___  _   _ | |_  ___ 
   |  _|  \\ \\/ // _ \\ / __|| | | || __|/ _ \\
   | |___  >  <|  __/| (__ | |_| || |_|  __/    
   |_____|/_/\\_\\\\___| \\___| \\__,_| \\__|\\___|`
 
-  let scriptPath = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'fileContext' })
+  let scriptPath = await traverser::traverser.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, contextPropertyName: 'fileContext' })
 
   try {
     console.log(message)
@@ -31,7 +31,7 @@ export async function executeShellscriptFile({ stageNode, processNode, graph = t
   @param {String[]} argument
   @param {Json stringifies string} option
 */
-export async function executeScriptSpawn({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
+export async function executeScriptSpawn({ stageNode, processNode, traverser = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
   let childProcess
   try {
     let command = processNode.properties.command,
