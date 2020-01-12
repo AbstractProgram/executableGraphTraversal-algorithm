@@ -4,13 +4,13 @@ import assert from 'assert'
 export const traverseThenProcessWithLogicalOperator = targetFunction =>
   new Proxy(targetFunction, {
     async apply(target, thisArg, argArray) {
-      let { traverser, processDataCallback } = argArray[0]
-      const { eventEmitter, depth, aggregator } = traverser
+      let { traverserPosition, processDataCallback } = argArray[0]
+      const { eventEmitter, depth, aggregator } = traverserPosition
       eventEmitter.on('nodeTraversalCompleted', data => {
         // console.log(data.value, ' resolved.')
       })
 
-      if (traverser.shouldContinue()) {
+      if (traverserPosition.shouldContinue()) {
         let traversalIterator = await Reflect.apply(...arguments)
         for await (let traversal of traversalIterator) {
           let relatedPort = traversal.group.config.portNode
@@ -21,9 +21,9 @@ export const traverseThenProcessWithLogicalOperator = targetFunction =>
         }
       }
 
-      if (traverser.shouldExecuteProcess()) {
+      if (traverserPosition.shouldExecuteProcess()) {
         let processResult = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
-        if (traverser.shouldIncludeResult()) aggregator.add(processResult)
+        if (traverserPosition.shouldIncludeResult()) aggregator.add(processResult)
       }
 
       return depth == 0 ? aggregator.finalResult : aggregator // check if top level call and not an initiated nested recursive call.

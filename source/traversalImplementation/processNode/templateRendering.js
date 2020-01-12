@@ -31,15 +31,15 @@ import filesystem from 'fs'
   3. render template with nested nodes results.
   4. post processing (execution chain concept)
  */
-export async function templateRenderingWithInseritonPosition({ stageNode, processNode, graph = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
-  assert(graph.context.templateParameter, `• Template/Document graph traversal relies on context.templateParameter on the graph context instance`)
-  let argument = graph.context.templateParameter
+export async function templateRenderingWithInseritonPosition({ stageNode, processNode, traverser = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
+  assert(traverser.context.templateParameter, `• Template/Document graph traversal relies on context.templateParameter on the traverser context instance`)
+  let argument = traverser.context.templateParameter
 
-  let resource = await graph.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, graph, contextPropertyName: 'fileContext' })
+  let resource = await traverser::traverser.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, contextPropertyName: 'fileContext' })
 
   let filePath
   // @param TraverserState <Object> - Passing a single traverser state, allows for easier changes/refactoring to be made.
-  if (typeof resource == 'function') filePath = await resource({ node: processNode, graph })
+  if (typeof resource == 'function') filePath = await resource({ node: processNode, traverser })
   else filePath = resource
   let fileContent = await filesystem.readFileSync(filePath, 'utf-8')
 
