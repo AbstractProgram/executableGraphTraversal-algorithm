@@ -16,8 +16,8 @@ export const processThenTraverse = targetFunction =>
       }
 
       if (traverserPosition.shouldContinue()) {
-        let traversalIterator = await Reflect.apply(...arguments)
-        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result, traversal.group.config /**Pass the related port node data, in case required*/)
+        let traversalResultIterator = await Reflect.apply(...arguments)
+        for await (let traversal of traversalResultIterator) aggregator.merge(traversal.group.result, traversal.group.config /**Pass the related port node data, in case required*/)
       }
 
       return depth == 0 ? aggregator.finalResult : aggregator // check if top level call and not an initiated nested recursive call.
@@ -35,8 +35,8 @@ export const traverseThenProcess = targetFunction =>
       })
 
       if (traverserPosition.shouldContinue()) {
-        let traversalIterator = await Reflect.apply(...arguments)
-        for await (let traversal of traversalIterator) aggregator.merge(traversal.group.result, traversal.group.config /**Pass the related port node data, in case required*/)
+        let traversalResultIterator = await Reflect.apply(...arguments)
+        for await (let traversal of traversalResultIterator) aggregator.merge(traversal.group.result, traversal.group.config /**Pass the related port node data, in case required*/)
       }
 
       if (traverserPosition.shouldExecuteProcess()) {

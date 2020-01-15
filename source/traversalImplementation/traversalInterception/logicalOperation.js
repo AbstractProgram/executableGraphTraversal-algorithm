@@ -11,8 +11,8 @@ export const traverseThenProcessWithLogicalOperator = targetFunction =>
       })
 
       if (traverserPosition.shouldContinue()) {
-        let traversalIterator = await Reflect.apply(...arguments)
-        for await (let traversal of traversalIterator) {
+        let traversalResultIterator = await Reflect.apply(...arguments)
+        for await (let traversal of traversalResultIterator) {
           let relatedPort = traversal.group.config.portNode
           assert(relatedPort.properties.logicalOperator, `• port (key="${relatedPort.properties.key}") must have "logicalOperator" property assigned, to aggregate results.`)
           // conditional comparison type to use for resolving boolean results.
