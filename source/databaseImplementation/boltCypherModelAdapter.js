@@ -43,7 +43,7 @@ function createEdgeData({ startId, endId, type }) {
   }
 }
 
-export const boltCypherModelAdapterFunction = ({ url = { protocol: 'bolt', hostname: 'localhost', port: 7687 }, authentication = { username: 'neo4j', password: 'test' } }) =>
+export const boltCypherModelAdapterFunction = ({ url = { protocol: 'bolt', hostname: 'localhost', port: 7687 }, authentication = { username: 'neo4j', password: 'test' } } = {}) =>
   function({ schemeReference } = {}) {
     assert(schemeReference, `• schemeReference must be passed to initialize the model adapter.`)
     const graphDBDriver = boltProtocolDriver.driver(`${url.protocol}://${url.hostname}:${url.port}`, boltProtocolDriver.auth.basic(authentication.username, authentication.password), {
