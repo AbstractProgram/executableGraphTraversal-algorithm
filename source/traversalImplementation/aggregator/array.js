@@ -1,30 +1,30 @@
-// Aggregates graph traversal results
-export class AggregatorArray {
-  // used in passing data to parent nodes for process use.
-  value: Array
-  constructor(initialValue: Array) {
-    this.value = initialValue || []
-    return this
+"use strict";Object.defineProperty(exports, "__esModule", { value: true });exports.AggregatorArray = void 0;
+class AggregatorArray {
+
+
+  constructor(initialValue) {
+    this.value = initialValue || [];
+    return this;
   }
 
-  // value for traversal depth 0
+
   get finalResult() {
-    return this.value
+    return this.value;
   }
 
-  // add item to aggregator
+
   add(item, aggregator = this) {
-    // filter null and undefined
-    // if (!item) throw new Error(`• Returned undefined or null result of data processing.`)
-    if (item) aggregator.value.push(item)
-    // return aggregator.value.unshift(item) // insert at start
+
+
+    if (item) aggregator.value.push(item);
+
   }
-  // merge aggregators
-  merge(additionalAggregatorArray: [Aggregator]) {
-    let targetAggregator: Aggregator = this
+
+  merge(additionalAggregatorArray) {
+    let targetAggregator = this;
     for (let additionalAggregator of additionalAggregatorArray) {
-      targetAggregator.value = [...targetAggregator.value, ...additionalAggregator.value]
+      targetAggregator.value = [...targetAggregator.value, ...additionalAggregator.value];
     }
-    return targetAggregator
-  }
-}
+    return targetAggregator;
+  }}exports.AggregatorArray = AggregatorArray;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9hZ2dyZWdhdG9yL2FycmF5LmpzIl0sIm5hbWVzIjpbIkFnZ3JlZ2F0b3JBcnJheSIsImNvbnN0cnVjdG9yIiwiaW5pdGlhbFZhbHVlIiwidmFsdWUiLCJmaW5hbFJlc3VsdCIsImFkZCIsIml0ZW0iLCJhZ2dyZWdhdG9yIiwicHVzaCIsIm1lcmdlIiwiYWRkaXRpb25hbEFnZ3JlZ2F0b3JBcnJheSIsInRhcmdldEFnZ3JlZ2F0b3IiLCJhZGRpdGlvbmFsQWdncmVnYXRvciJdLCJtYXBwaW5ncyI6IjtBQUNPLE1BQU1BLGVBQU4sQ0FBc0I7OztBQUczQkMsRUFBQUEsV0FBVyxDQUFDQyxZQUFELEVBQXNCO0FBQy9CLFNBQUtDLEtBQUwsR0FBYUQsWUFBWSxJQUFJLEVBQTdCO0FBQ0EsV0FBTyxJQUFQO0FBQ0Q7OztBQUdELE1BQUlFLFdBQUosR0FBa0I7QUFDaEIsV0FBTyxLQUFLRCxLQUFaO0FBQ0Q7OztBQUdERSxFQUFBQSxHQUFHLENBQUNDLElBQUQsRUFBT0MsVUFBVSxHQUFHLElBQXBCLEVBQTBCOzs7QUFHM0IsUUFBSUQsSUFBSixFQUFVQyxVQUFVLENBQUNKLEtBQVgsQ0FBaUJLLElBQWpCLENBQXNCRixJQUF0Qjs7QUFFWDs7QUFFREcsRUFBQUEsS0FBSyxDQUFDQyx5QkFBRCxFQUEwQztBQUM3QyxRQUFJQyxnQkFBNEIsR0FBRyxJQUFuQztBQUNBLFNBQUssSUFBSUMsb0JBQVQsSUFBaUNGLHlCQUFqQyxFQUE0RDtBQUMxREMsTUFBQUEsZ0JBQWdCLENBQUNSLEtBQWpCLEdBQXlCLENBQUMsR0FBR1EsZ0JBQWdCLENBQUNSLEtBQXJCLEVBQTRCLEdBQUdTLG9CQUFvQixDQUFDVCxLQUFwRCxDQUF6QjtBQUNEO0FBQ0QsV0FBT1EsZ0JBQVA7QUFDRCxHQTNCMEIsQyIsInNvdXJjZXNDb250ZW50IjpbIi8vIEFnZ3JlZ2F0ZXMgZ3JhcGggdHJhdmVyc2FsIHJlc3VsdHNcbmV4cG9ydCBjbGFzcyBBZ2dyZWdhdG9yQXJyYXkge1xuICAvLyB1c2VkIGluIHBhc3NpbmcgZGF0YSB0byBwYXJlbnQgbm9kZXMgZm9yIHByb2Nlc3MgdXNlLlxuICB2YWx1ZTogQXJyYXlcbiAgY29uc3RydWN0b3IoaW5pdGlhbFZhbHVlOiBBcnJheSkge1xuICAgIHRoaXMudmFsdWUgPSBpbml0aWFsVmFsdWUgfHwgW11cbiAgICByZXR1cm4gdGhpc1xuICB9XG5cbiAgLy8gdmFsdWUgZm9yIHRyYXZlcnNhbCBkZXB0aCAwXG4gIGdldCBmaW5hbFJlc3VsdCgpIHtcbiAgICByZXR1cm4gdGhpcy52YWx1ZVxuICB9XG5cbiAgLy8gYWRkIGl0ZW0gdG8gYWdncmVnYXRvclxuICBhZGQoaXRlbSwgYWdncmVnYXRvciA9IHRoaXMpIHtcbiAgICAvLyBmaWx0ZXIgbnVsbCBhbmQgdW5kZWZpbmVkXG4gICAgLy8gaWYgKCFpdGVtKSB0aHJvdyBuZXcgRXJyb3IoYOKAoiBSZXR1cm5lZCB1bmRlZmluZWQgb3IgbnVsbCByZXN1bHQgb2YgZGF0YSBwcm9jZXNzaW5nLmApXG4gICAgaWYgKGl0ZW0pIGFnZ3JlZ2F0b3IudmFsdWUucHVzaChpdGVtKVxuICAgIC8vIHJldHVybiBhZ2dyZWdhdG9yLnZhbHVlLnVuc2hpZnQoaXRlbSkgLy8gaW5zZXJ0IGF0IHN0YXJ0XG4gIH1cbiAgLy8gbWVyZ2UgYWdncmVnYXRvcnNcbiAgbWVyZ2UoYWRkaXRpb25hbEFnZ3JlZ2F0b3JBcnJheTogW0FnZ3JlZ2F0b3JdKSB7XG4gICAgbGV0IHRhcmdldEFnZ3JlZ2F0b3I6IEFnZ3JlZ2F0b3IgPSB0aGlzXG4gICAgZm9yIChsZXQgYWRkaXRpb25hbEFnZ3JlZ2F0b3Igb2YgYWRkaXRpb25hbEFnZ3JlZ2F0b3JBcnJheSkge1xuICAgICAgdGFyZ2V0QWdncmVnYXRvci52YWx1ZSA9IFsuLi50YXJnZXRBZ2dyZWdhdG9yLnZhbHVlLCAuLi5hZGRpdGlvbmFsQWdncmVnYXRvci52YWx1ZV1cbiAgICB9XG4gICAgcmV0dXJuIHRhcmdldEFnZ3JlZ2F0b3JcbiAgfVxufVxuIl19

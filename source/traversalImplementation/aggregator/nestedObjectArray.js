@@ -1,42 +1,42 @@
-import assert from 'assert'
+"use strict";var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");Object.defineProperty(exports, "__esModule", { value: true });exports.AggregatorObjectOfArray = void 0;var _assert = _interopRequireDefault(require("assert"));
 
-// Aggregate nested graph results by port group name/key.
-export class AggregatorObjectOfArray {
-  object: Object
-  currentValue: any
+
+class AggregatorObjectOfArray {
+
+
 
   get value() {
-    return this.object
+    return this.object;
   }
-  // finalResult getter is used for returning result from the node with depth of 0, i.e. the final traversal result.
+
   get finalResult() {
-    return this.currentValue
+    return this.currentValue;
   }
 
-  constructor(initialValue: Object) {
-    this.object = initialValue || {}
+  constructor(initialValue) {
+    this.object = initialValue || {};
 
-    return this
+    return this;
   }
 
-  // add item to aggregator
+
   add(item) {
-    if (item) this.currentValue = item
+    if (item) this.currentValue = item;
   }
 
-  // merge aggregators
-  merge(additionalAggregatorArray: [Aggregator], groupConfig) {
-    let targetAggregator: Aggregator = this
-    let groupKey = groupConfig.portNode.properties.groupKey
-    assert(groupKey, `• groupKey property must exist in the port node.`)
 
-    // initialize groupKey property in the aggregator object
-    targetAggregator.object[groupKey] ||= []
+  merge(additionalAggregatorArray, groupConfig) {var _targetAggregator$obj;
+    let targetAggregator = this;
+    let groupKey = groupConfig.portNode.properties.groupKey;
+    (0, _assert.default)(groupKey, `• groupKey property must exist in the port node.`);
+
+
+    (_targetAggregator$obj = targetAggregator.object)[groupKey] || (_targetAggregator$obj[groupKey] = []);
 
     for (let additionalAggregator of additionalAggregatorArray) {
-      targetAggregator.object[groupKey] = [...targetAggregator.object[groupKey], additionalAggregator.currentValue]
+      targetAggregator.object[groupKey] = [...targetAggregator.object[groupKey], additionalAggregator.currentValue];
     }
 
-    return targetAggregator
-  }
-}
+    return targetAggregator;
+  }}exports.AggregatorObjectOfArray = AggregatorObjectOfArray;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9hZ2dyZWdhdG9yL25lc3RlZE9iamVjdEFycmF5LmpzIl0sIm5hbWVzIjpbIkFnZ3JlZ2F0b3JPYmplY3RPZkFycmF5IiwidmFsdWUiLCJvYmplY3QiLCJmaW5hbFJlc3VsdCIsImN1cnJlbnRWYWx1ZSIsImNvbnN0cnVjdG9yIiwiaW5pdGlhbFZhbHVlIiwiYWRkIiwiaXRlbSIsIm1lcmdlIiwiYWRkaXRpb25hbEFnZ3JlZ2F0b3JBcnJheSIsImdyb3VwQ29uZmlnIiwidGFyZ2V0QWdncmVnYXRvciIsImdyb3VwS2V5IiwicG9ydE5vZGUiLCJwcm9wZXJ0aWVzIiwiYWRkaXRpb25hbEFnZ3JlZ2F0b3IiXSwibWFwcGluZ3MiOiJ5TUFBQTs7O0FBR08sTUFBTUEsdUJBQU4sQ0FBOEI7Ozs7QUFJbkMsTUFBSUMsS0FBSixHQUFZO0FBQ1YsV0FBTyxLQUFLQyxNQUFaO0FBQ0Q7O0FBRUQsTUFBSUMsV0FBSixHQUFrQjtBQUNoQixXQUFPLEtBQUtDLFlBQVo7QUFDRDs7QUFFREMsRUFBQUEsV0FBVyxDQUFDQyxZQUFELEVBQXVCO0FBQ2hDLFNBQUtKLE1BQUwsR0FBY0ksWUFBWSxJQUFJLEVBQTlCOztBQUVBLFdBQU8sSUFBUDtBQUNEOzs7QUFHREMsRUFBQUEsR0FBRyxDQUFDQyxJQUFELEVBQU87QUFDUixRQUFJQSxJQUFKLEVBQVUsS0FBS0osWUFBTCxHQUFvQkksSUFBcEI7QUFDWDs7O0FBR0RDLEVBQUFBLEtBQUssQ0FBQ0MseUJBQUQsRUFBMENDLFdBQTFDLEVBQXVEO0FBQzFELFFBQUlDLGdCQUE0QixHQUFHLElBQW5DO0FBQ0EsUUFBSUMsUUFBUSxHQUFHRixXQUFXLENBQUNHLFFBQVosQ0FBcUJDLFVBQXJCLENBQWdDRixRQUEvQztBQUNBLHlCQUFPQSxRQUFQLEVBQWtCLGtEQUFsQjs7O0FBR0EsNkJBQUFELGdCQUFnQixDQUFDVixNQUFqQixFQUF3QlcsUUFBeEIsNEJBQXdCQSxRQUF4QixJQUFzQyxFQUF0Qzs7QUFFQSxTQUFLLElBQUlHLG9CQUFULElBQWlDTix5QkFBakMsRUFBNEQ7QUFDMURFLE1BQUFBLGdCQUFnQixDQUFDVixNQUFqQixDQUF3QlcsUUFBeEIsSUFBb0MsQ0FBQyxHQUFHRCxnQkFBZ0IsQ0FBQ1YsTUFBakIsQ0FBd0JXLFFBQXhCLENBQUosRUFBdUNHLG9CQUFvQixDQUFDWixZQUE1RCxDQUFwQztBQUNEOztBQUVELFdBQU9RLGdCQUFQO0FBQ0QsR0FyQ2tDLEMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgYXNzZXJ0IGZyb20gJ2Fzc2VydCdcblxuLy8gQWdncmVnYXRlIG5lc3RlZCBncmFwaCByZXN1bHRzIGJ5IHBvcnQgZ3JvdXAgbmFtZS9rZXkuXG5leHBvcnQgY2xhc3MgQWdncmVnYXRvck9iamVjdE9mQXJyYXkge1xuICBvYmplY3Q6IE9iamVjdFxuICBjdXJyZW50VmFsdWU6IGFueVxuXG4gIGdldCB2YWx1ZSgpIHtcbiAgICByZXR1cm4gdGhpcy5vYmplY3RcbiAgfVxuICAvLyBmaW5hbFJlc3VsdCBnZXR0ZXIgaXMgdXNlZCBmb3IgcmV0dXJuaW5nIHJlc3VsdCBmcm9tIHRoZSBub2RlIHdpdGggZGVwdGggb2YgMCwgaS5lLiB0aGUgZmluYWwgdHJhdmVyc2FsIHJlc3VsdC5cbiAgZ2V0IGZpbmFsUmVzdWx0KCkge1xuICAgIHJldHVybiB0aGlzLmN1cnJlbnRWYWx1ZVxuICB9XG5cbiAgY29uc3RydWN0b3IoaW5pdGlhbFZhbHVlOiBPYmplY3QpIHtcbiAgICB0aGlzLm9iamVjdCA9IGluaXRpYWxWYWx1ZSB8fCB7fVxuXG4gICAgcmV0dXJuIHRoaXNcbiAgfVxuXG4gIC8vIGFkZCBpdGVtIHRvIGFnZ3JlZ2F0b3JcbiAgYWRkKGl0ZW0pIHtcbiAgICBpZiAoaXRlbSkgdGhpcy5jdXJyZW50VmFsdWUgPSBpdGVtXG4gIH1cblxuICAvLyBtZXJnZSBhZ2dyZWdhdG9yc1xuICBtZXJnZShhZGRpdGlvbmFsQWdncmVnYXRvckFycmF5OiBbQWdncmVnYXRvcl0sIGdyb3VwQ29uZmlnKSB7XG4gICAgbGV0IHRhcmdldEFnZ3JlZ2F0b3I6IEFnZ3JlZ2F0b3IgPSB0aGlzXG4gICAgbGV0IGdyb3VwS2V5ID0gZ3JvdXBDb25maWcucG9ydE5vZGUucHJvcGVydGllcy5ncm91cEtleVxuICAgIGFzc2VydChncm91cEtleSwgYOKAoiBncm91cEtleSBwcm9wZXJ0eSBtdXN0IGV4aXN0IGluIHRoZSBwb3J0IG5vZGUuYClcblxuICAgIC8vIGluaXRpYWxpemUgZ3JvdXBLZXkgcHJvcGVydHkgaW4gdGhlIGFnZ3JlZ2F0b3Igb2JqZWN0XG4gICAgdGFyZ2V0QWdncmVnYXRvci5vYmplY3RbZ3JvdXBLZXldIHx8PSBbXVxuXG4gICAgZm9yIChsZXQgYWRkaXRpb25hbEFnZ3JlZ2F0b3Igb2YgYWRkaXRpb25hbEFnZ3JlZ2F0b3JBcnJheSkge1xuICAgICAgdGFyZ2V0QWdncmVnYXRvci5vYmplY3RbZ3JvdXBLZXldID0gWy4uLnRhcmdldEFnZ3JlZ2F0b3Iub2JqZWN0W2dyb3VwS2V5XSwgYWRkaXRpb25hbEFnZ3JlZ2F0b3IuY3VycmVudFZhbHVlXVxuICAgIH1cblxuICAgIHJldHVybiB0YXJnZXRBZ2dyZWdhdG9yXG4gIH1cbn1cbiJdfQ==
