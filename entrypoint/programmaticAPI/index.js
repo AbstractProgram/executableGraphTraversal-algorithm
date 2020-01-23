@@ -7,12 +7,12 @@ if (filesystem.existsSync(projectConfig.directory.distribution)) {
   module.exports = require(projectConfig.directory.distribution)
 } else {
   // • Transpilation (babelJSCompiler)
-  const { Compiler } = require('@dependency/javascriptTranspilation')
+  const { Compiler } = require('@deployment/javascriptTranspilation')
   let compiler = new Compiler({ callerPath: __dirname })
   compiler.requireHook()
   module.exports = require(path.join(projectConfig.directory.source, projectConfig.entrypoint.programmaticAPI))
   // process.on('exit', () => {
   //   console.log(compiler.loadedFiles.map(value => value.filename))
-  //   console.log(compiler.babelRegisterConfig.ignore)
+  //   console.log(compiler.config.ignore)
   // })
 }
