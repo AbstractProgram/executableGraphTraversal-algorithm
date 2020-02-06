@@ -1,49 +1,49 @@
-// Conditions aggregator
-export class ConditionAggregator {
-  processResultArray: Array
-  calculatedLogicalOperaion: Boolean // the result of the logical operation on the array values.
+"use strict";Object.defineProperty(exports, "__esModule", { value: true });exports.ConditionAggregator = void 0;
+class ConditionAggregator {
 
-  // used in passing data to parent nodes for process use.
+
+
+
   get value() {
-    return this.calculatedLogicalOperaion
+    return this.calculatedLogicalOperaion;
   }
 
-  // value for traversal depth 0
+
   get finalResult() {
-    return this.processResultArray
+    return this.processResultArray;
   }
 
-  constructor(initialValue: Array) {
-    this.processResultArray = initialValue || []
-    return this
+  constructor(initialValue) {
+    this.processResultArray = initialValue || [];
+    return this;
   }
 
-  // add item to aggregator
+
   add(item, aggregator = this) {
-    aggregator.processResultArray.push(item) // add item regardless if it is a true boolean or false boolean, as it is needed to be checked by the logical operator.
+    aggregator.processResultArray.push(item);
   }
 
-  // merge aggregators
-  merge(additionalAggregatorArray: Aggregator, logicalOperator: 'and' | 'or') {
-    let targetAggregator: Aggregator = this
-    if (!targetAggregator.calculatedLogicalOperaion) targetAggregator.calculateLogicalOperation(logicalOperator)
-    // TODO: test if it works with multiple nested condition statges.
+
+  merge(additionalAggregatorArray, logicalOperator) {
+    let targetAggregator = this;
+    if (!targetAggregator.calculatedLogicalOperaion) targetAggregator.calculateLogicalOperation(logicalOperator);
+
     for (let additionalAggregator of additionalAggregatorArray) {
-      if (!additionalAggregator.calculatedLogicalOperaion) additionalAggregator.calculateLogicalOperation(logicalOperator)
-      targetAggregator.calculatedLogicalOperaion = Boolean(additionalAggregator.calculatedLogicalOperaion) && Boolean(targetAggregator.calculatedLogicalOperaion)
+      if (!additionalAggregator.calculatedLogicalOperaion) additionalAggregator.calculateLogicalOperation(logicalOperator);
+      targetAggregator.calculatedLogicalOperaion = Boolean(additionalAggregator.calculatedLogicalOperaion) && Boolean(targetAggregator.calculatedLogicalOperaion);
     }
-    return targetAggregator
+    return targetAggregator;
   }
 
   calculateLogicalOperation(logicalOperator) {
     switch (logicalOperator) {
       case 'or':
-        this.calculatedLogicalOperaion = this.processResultArray.some(item => Boolean(item))
-        break
+        this.calculatedLogicalOperaion = this.processResultArray.some(item => Boolean(item));
+        break;
       case 'and':
       default:
-        this.calculatedLogicalOperaion = this.processResultArray.every(item => Boolean(item))
-        break
-    }
-  }
-}
+        this.calculatedLogicalOperaion = this.processResultArray.every(item => Boolean(item));
+        break;}
+
+  }}exports.ConditionAggregator = ConditionAggregator;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9hZ2dyZWdhdG9yL2NvbmRpdGlvbi5qcyJdLCJuYW1lcyI6WyJDb25kaXRpb25BZ2dyZWdhdG9yIiwidmFsdWUiLCJjYWxjdWxhdGVkTG9naWNhbE9wZXJhaW9uIiwiZmluYWxSZXN1bHQiLCJwcm9jZXNzUmVzdWx0QXJyYXkiLCJjb25zdHJ1Y3RvciIsImluaXRpYWxWYWx1ZSIsImFkZCIsIml0ZW0iLCJhZ2dyZWdhdG9yIiwicHVzaCIsIm1lcmdlIiwiYWRkaXRpb25hbEFnZ3JlZ2F0b3JBcnJheSIsImxvZ2ljYWxPcGVyYXRvciIsInRhcmdldEFnZ3JlZ2F0b3IiLCJjYWxjdWxhdGVMb2dpY2FsT3BlcmF0aW9uIiwiYWRkaXRpb25hbEFnZ3JlZ2F0b3IiLCJCb29sZWFuIiwic29tZSIsImV2ZXJ5Il0sIm1hcHBpbmdzIjoiO0FBQ08sTUFBTUEsbUJBQU4sQ0FBMEI7Ozs7O0FBSy9CLE1BQUlDLEtBQUosR0FBWTtBQUNWLFdBQU8sS0FBS0MseUJBQVo7QUFDRDs7O0FBR0QsTUFBSUMsV0FBSixHQUFrQjtBQUNoQixXQUFPLEtBQUtDLGtCQUFaO0FBQ0Q7O0FBRURDLEVBQUFBLFdBQVcsQ0FBQ0MsWUFBRCxFQUFzQjtBQUMvQixTQUFLRixrQkFBTCxHQUEwQkUsWUFBWSxJQUFJLEVBQTFDO0FBQ0EsV0FBTyxJQUFQO0FBQ0Q7OztBQUdEQyxFQUFBQSxHQUFHLENBQUNDLElBQUQsRUFBT0MsVUFBVSxHQUFHLElBQXBCLEVBQTBCO0FBQzNCQSxJQUFBQSxVQUFVLENBQUNMLGtCQUFYLENBQThCTSxJQUE5QixDQUFtQ0YsSUFBbkM7QUFDRDs7O0FBR0RHLEVBQUFBLEtBQUssQ0FBQ0MseUJBQUQsRUFBd0NDLGVBQXhDLEVBQXVFO0FBQzFFLFFBQUlDLGdCQUE0QixHQUFHLElBQW5DO0FBQ0EsUUFBSSxDQUFDQSxnQkFBZ0IsQ0FBQ1oseUJBQXRCLEVBQWlEWSxnQkFBZ0IsQ0FBQ0MseUJBQWpCLENBQTJDRixlQUEzQzs7QUFFakQsU0FBSyxJQUFJRyxvQkFBVCxJQUFpQ0oseUJBQWpDLEVBQTREO0FBQzFELFVBQUksQ0FBQ0ksb0JBQW9CLENBQUNkLHlCQUExQixFQUFxRGMsb0JBQW9CLENBQUNELHlCQUFyQixDQUErQ0YsZUFBL0M7QUFDckRDLE1BQUFBLGdCQUFnQixDQUFDWix5QkFBakIsR0FBNkNlLE9BQU8sQ0FBQ0Qsb0JBQW9CLENBQUNkLHlCQUF0QixDQUFQLElBQTJEZSxPQUFPLENBQUNILGdCQUFnQixDQUFDWix5QkFBbEIsQ0FBL0c7QUFDRDtBQUNELFdBQU9ZLGdCQUFQO0FBQ0Q7O0FBRURDLEVBQUFBLHlCQUF5QixDQUFDRixlQUFELEVBQWtCO0FBQ3pDLFlBQVFBLGVBQVI7QUFDRSxXQUFLLElBQUw7QUFDRSxhQUFLWCx5QkFBTCxHQUFpQyxLQUFLRSxrQkFBTCxDQUF3QmMsSUFBeEIsQ0FBNkJWLElBQUksSUFBSVMsT0FBTyxDQUFDVCxJQUFELENBQTVDLENBQWpDO0FBQ0E7QUFDRixXQUFLLEtBQUw7QUFDQTtBQUNFLGFBQUtOLHlCQUFMLEdBQWlDLEtBQUtFLGtCQUFMLENBQXdCZSxLQUF4QixDQUE4QlgsSUFBSSxJQUFJUyxPQUFPLENBQUNULElBQUQsQ0FBN0MsQ0FBakM7QUFDQSxjQVBKOztBQVNELEdBOUM4QixDIiwic291cmNlc0NvbnRlbnQiOlsiLy8gQ29uZGl0aW9ucyBhZ2dyZWdhdG9yXG5leHBvcnQgY2xhc3MgQ29uZGl0aW9uQWdncmVnYXRvciB7XG4gIHByb2Nlc3NSZXN1bHRBcnJheTogQXJyYXlcbiAgY2FsY3VsYXRlZExvZ2ljYWxPcGVyYWlvbjogQm9vbGVhbiAvLyB0aGUgcmVzdWx0IG9mIHRoZSBsb2dpY2FsIG9wZXJhdGlvbiBvbiB0aGUgYXJyYXkgdmFsdWVzLlxuXG4gIC8vIHVzZWQgaW4gcGFzc2luZyBkYXRhIHRvIHBhcmVudCBub2RlcyBmb3IgcHJvY2VzcyB1c2UuXG4gIGdldCB2YWx1ZSgpIHtcbiAgICByZXR1cm4gdGhpcy5jYWxjdWxhdGVkTG9naWNhbE9wZXJhaW9uXG4gIH1cblxuICAvLyB2YWx1ZSBmb3IgdHJhdmVyc2FsIGRlcHRoIDBcbiAgZ2V0IGZpbmFsUmVzdWx0KCkge1xuICAgIHJldHVybiB0aGlzLnByb2Nlc3NSZXN1bHRBcnJheVxuICB9XG5cbiAgY29uc3RydWN0b3IoaW5pdGlhbFZhbHVlOiBBcnJheSkge1xuICAgIHRoaXMucHJvY2Vzc1Jlc3VsdEFycmF5ID0gaW5pdGlhbFZhbHVlIHx8IFtdXG4gICAgcmV0dXJuIHRoaXNcbiAgfVxuXG4gIC8vIGFkZCBpdGVtIHRvIGFnZ3JlZ2F0b3JcbiAgYWRkKGl0ZW0sIGFnZ3JlZ2F0b3IgPSB0aGlzKSB7XG4gICAgYWdncmVnYXRvci5wcm9jZXNzUmVzdWx0QXJyYXkucHVzaChpdGVtKSAvLyBhZGQgaXRlbSByZWdhcmRsZXNzIGlmIGl0IGlzIGEgdHJ1ZSBib29sZWFuIG9yIGZhbHNlIGJvb2xlYW4sIGFzIGl0IGlzIG5lZWRlZCB0byBiZSBjaGVja2VkIGJ5IHRoZSBsb2dpY2FsIG9wZXJhdG9yLlxuICB9XG5cbiAgLy8gbWVyZ2UgYWdncmVnYXRvcnNcbiAgbWVyZ2UoYWRkaXRpb25hbEFnZ3JlZ2F0b3JBcnJheTogQWdncmVnYXRvciwgbG9naWNhbE9wZXJhdG9yOiAnYW5kJyB8ICdvcicpIHtcbiAgICBsZXQgdGFyZ2V0QWdncmVnYXRvcjogQWdncmVnYXRvciA9IHRoaXNcbiAgICBpZiAoIXRhcmdldEFnZ3JlZ2F0b3IuY2FsY3VsYXRlZExvZ2ljYWxPcGVyYWlvbikgdGFyZ2V0QWdncmVnYXRvci5jYWxjdWxhdGVMb2dpY2FsT3BlcmF0aW9uKGxvZ2ljYWxPcGVyYXRvcilcbiAgICAvLyBUT0RPOiB0ZXN0IGlmIGl0IHdvcmtzIHdpdGggbXVsdGlwbGUgbmVzdGVkIGNvbmRpdGlvbiBzdGF0Z2VzLlxuICAgIGZvciAobGV0IGFkZGl0aW9uYWxBZ2dyZWdhdG9yIG9mIGFkZGl0aW9uYWxBZ2dyZWdhdG9yQXJyYXkpIHtcbiAgICAgIGlmICghYWRkaXRpb25hbEFnZ3JlZ2F0b3IuY2FsY3VsYXRlZExvZ2ljYWxPcGVyYWlvbikgYWRkaXRpb25hbEFnZ3JlZ2F0b3IuY2FsY3VsYXRlTG9naWNhbE9wZXJhdGlvbihsb2dpY2FsT3BlcmF0b3IpXG4gICAgICB0YXJnZXRBZ2dyZWdhdG9yLmNhbGN1bGF0ZWRMb2dpY2FsT3BlcmFpb24gPSBCb29sZWFuKGFkZGl0aW9uYWxBZ2dyZWdhdG9yLmNhbGN1bGF0ZWRMb2dpY2FsT3BlcmFpb24pICYmIEJvb2xlYW4odGFyZ2V0QWdncmVnYXRvci5jYWxjdWxhdGVkTG9naWNhbE9wZXJhaW9uKVxuICAgIH1cbiAgICByZXR1cm4gdGFyZ2V0QWdncmVnYXRvclxuICB9XG5cbiAgY2FsY3VsYXRlTG9naWNhbE9wZXJhdGlvbihsb2dpY2FsT3BlcmF0b3IpIHtcbiAgICBzd2l0Y2ggKGxvZ2ljYWxPcGVyYXRvcikge1xuICAgICAgY2FzZSAnb3InOlxuICAgICAgICB0aGlzLmNhbGN1bGF0ZWRMb2dpY2FsT3BlcmFpb24gPSB0aGlzLnByb2Nlc3NSZXN1bHRBcnJheS5zb21lKGl0ZW0gPT4gQm9vbGVhbihpdGVtKSlcbiAgICAgICAgYnJlYWtcbiAgICAgIGNhc2UgJ2FuZCc6XG4gICAgICBkZWZhdWx0OlxuICAgICAgICB0aGlzLmNhbGN1bGF0ZWRMb2dpY2FsT3BlcmFpb24gPSB0aGlzLnByb2Nlc3NSZXN1bHRBcnJheS5ldmVyeShpdGVtID0+IEJvb2xlYW4oaXRlbSkpXG4gICAgICAgIGJyZWFrXG4gICAgfVxuICB9XG59XG4iXX0=
