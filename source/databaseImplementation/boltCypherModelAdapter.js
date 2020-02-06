@@ -58,6 +58,8 @@ export const boltCypherModelAdapterFunction = ({ url = { protocol: 'bolt', hostn
 
     const implementation = {
       driverInstance: graphDBDriver, // expose driver instance
+      // provide a method to Close all open sessions and other associated resources.
+      close: () => graphDBDriver.close(),
 
       // This is kept for future reference only:
       async replaceNodeWithAnother_loadGraphData({ nodeEntryData = [], connectionEntryData = [] } = {}) {
