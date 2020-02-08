@@ -38,6 +38,7 @@ Used for:
  */
 export async function executeFunctionReference({ stageNode, processNode, traverser = this, nextProcessData }, { additionalParameter, traverseCallContext }) {
   let functionCallback = await traverser::traverser.traverserInstruction.resourceResolution.resolveResource({ targetNode: processNode, contextPropertyName: 'functionReferenceContext' })
+  assert(functionCallback, `• Resource resource (functionCallback) cannot be undefined for processNode ${JSON.stringify(processNode)}`)
 
   try {
     // Pass parameter object of traverserState
