@@ -1,11 +1,12 @@
-import { resolve } from 'path'
-// import { iterateConnection } from './iterateConnection.js'
+"use strict";Object.defineProperty(exports, "__esModule", { value: true });exports.nestedNode = nestedNode;
 
-/**  The purpose of this function is to find & yield next nodes.
- * @yields {Object { node: <node instance>} } a traversal configuration feed/iterato
- **/
-export async function* nestedNode({ forkEdge, getImplementation, additionalChildNode, traverser = this }) {
-  let portNode = forkEdge.destination
-  let nodeIteratorFeed = await traverser::traverser.traverserInstruction.nodeIterator.iterateNext({ targetNode: portNode, additionalChildNode })
-  yield* nodeIteratorFeed
+
+
+
+
+async function* nestedNode({ forkEdge, getImplementation, additionalChildNode, traverser = this }) {
+  let portNode = forkEdge.destination;
+  let nodeIteratorFeed = await traverser.traverserInstruction.nodeIterator.iterateNext.call(traverser, { targetNode: portNode, additionalChildNode });
+  yield* nodeIteratorFeed;
 }
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi9wb3J0Tm9kZS5qcyJdLCJuYW1lcyI6WyJuZXN0ZWROb2RlIiwiZm9ya0VkZ2UiLCJnZXRJbXBsZW1lbnRhdGlvbiIsImFkZGl0aW9uYWxDaGlsZE5vZGUiLCJ0cmF2ZXJzZXIiLCJwb3J0Tm9kZSIsImRlc3RpbmF0aW9uIiwibm9kZUl0ZXJhdG9yRmVlZCIsInRyYXZlcnNlckluc3RydWN0aW9uIiwibm9kZUl0ZXJhdG9yIiwiaXRlcmF0ZU5leHQiLCJ0YXJnZXROb2RlIl0sIm1hcHBpbmdzIjoiOzs7Ozs7QUFNTyxnQkFBZ0JBLFVBQWhCLENBQTJCLEVBQUVDLFFBQUYsRUFBWUMsaUJBQVosRUFBK0JDLG1CQUEvQixFQUFvREMsU0FBUyxHQUFHLElBQWhFLEVBQTNCLEVBQW1HO0FBQ3hHLE1BQUlDLFFBQVEsR0FBR0osUUFBUSxDQUFDSyxXQUF4QjtBQUNBLE1BQUlDLGdCQUFnQixHQUFHLE1BQWlCSCxTQUFTLENBQUNJLG9CQUFWLENBQStCQyxZQUEvQixDQUE0Q0MsV0FBdkQsTUFBQU4sU0FBUyxFQUEwRCxFQUFFTyxVQUFVLEVBQUVOLFFBQWQsRUFBd0JGLG1CQUF4QixFQUExRCxDQUF0QztBQUNBLFNBQU9JLGdCQUFQO0FBQ0QiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyByZXNvbHZlIH0gZnJvbSAncGF0aCdcbi8vIGltcG9ydCB7IGl0ZXJhdGVDb25uZWN0aW9uIH0gZnJvbSAnLi9pdGVyYXRlQ29ubmVjdGlvbi5qcydcblxuLyoqICBUaGUgcHVycG9zZSBvZiB0aGlzIGZ1bmN0aW9uIGlzIHRvIGZpbmQgJiB5aWVsZCBuZXh0IG5vZGVzLlxuICogQHlpZWxkcyB7T2JqZWN0IHsgbm9kZTogPG5vZGUgaW5zdGFuY2U+fSB9IGEgdHJhdmVyc2FsIGNvbmZpZ3VyYXRpb24gZmVlZC9pdGVyYXRvXG4gKiovXG5leHBvcnQgYXN5bmMgZnVuY3Rpb24qIG5lc3RlZE5vZGUoeyBmb3JrRWRnZSwgZ2V0SW1wbGVtZW50YXRpb24sIGFkZGl0aW9uYWxDaGlsZE5vZGUsIHRyYXZlcnNlciA9IHRoaXMgfSkge1xuICBsZXQgcG9ydE5vZGUgPSBmb3JrRWRnZS5kZXN0aW5hdGlvblxuICBsZXQgbm9kZUl0ZXJhdG9yRmVlZCA9IGF3YWl0IHRyYXZlcnNlcjo6dHJhdmVyc2VyLnRyYXZlcnNlckluc3RydWN0aW9uLm5vZGVJdGVyYXRvci5pdGVyYXRlTmV4dCh7IHRhcmdldE5vZGU6IHBvcnROb2RlLCBhZGRpdGlvbmFsQ2hpbGROb2RlIH0pXG4gIHlpZWxkKiBub2RlSXRlcmF0b3JGZWVkXG59XG4iXX0=

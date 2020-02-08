@@ -1,49 +1,49 @@
-import assert from 'assert'
+"use strict";Object.defineProperty(exports, "__esModule", { value: true });exports.traverseThenProcess = exports.processThenTraverse = void 0;
 
-// visiting each node before visiting it's child nodes.
-export const processThenTraverse = targetFunction =>
-  new Proxy(targetFunction, {
-    async apply(target, thisArg, argArray) {
-      let { traverserPosition, processDataCallback } = argArray[0]
-      const { eventEmitter, depth, aggregator } = traverserPosition
-      eventEmitter.on('nodeTraversalCompleted', data => {
-        // console.log(data.value, ' resolved.')
-      })
 
-      if (traverserPosition.shouldExecuteProcess()) {
-        let processResult = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
-        if (traverserPosition.shouldIncludeResult()) aggregator.add(processResult)
-      }
+const processThenTraverse = (targetFunction) =>
+new Proxy(targetFunction, {
+  async apply(target, thisArg, argArray) {
+    let { traverserPosition, processDataCallback } = argArray[0];
+    const { eventEmitter, depth, aggregator } = traverserPosition;
+    eventEmitter.on('nodeTraversalCompleted', data => {
 
-      if (traverserPosition.shouldContinue()) {
-        let traversalResultIterator = await Reflect.apply(...arguments)
-        for await (let traversal of traversalResultIterator) aggregator.merge(traversal.group.result, traversal.group.config /**Pass the related port node data, in case required*/)
-      }
+    });
 
-      return depth == 0 ? aggregator.finalResult : aggregator // check if top level call and not an initiated nested recursive call.
-    },
-  })
+    if (traverserPosition.shouldExecuteProcess()) {
+      let processResult = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} });
+      if (traverserPosition.shouldIncludeResult()) aggregator.add(processResult);
+    }
 
-// vising the node after visiting the child nodes.
-export const traverseThenProcess = targetFunction =>
-  new Proxy(targetFunction, {
-    async apply(target, thisArg, argArray) {
-      let { traverserPosition, processDataCallback } = argArray[0]
-      const { eventEmitter, depth, aggregator } = traverserPosition
-      eventEmitter.on('nodeTraversalCompleted', data => {
-        // console.log(data.value, ' resolved.')
-      })
+    if (traverserPosition.shouldContinue()) {
+      let traversalResultIterator = await Reflect.apply(...arguments);
+      for await (let traversal of traversalResultIterator) aggregator.merge(traversal.group.result, traversal.group.config);
+    }
 
-      if (traverserPosition.shouldContinue()) {
-        let traversalResultIterator = await Reflect.apply(...arguments)
-        for await (let traversal of traversalResultIterator) aggregator.merge(traversal.group.result, traversal.group.config /**Pass the related port node data, in case required*/)
-      }
+    return depth == 0 ? aggregator.finalResult : aggregator;
+  } });exports.processThenTraverse = processThenTraverse;
 
-      if (traverserPosition.shouldExecuteProcess()) {
-        let processResult = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} })
-        if (traverserPosition.shouldIncludeResult()) aggregator.add(processResult)
-      }
 
-      return depth == 0 ? aggregator.finalResult : aggregator // check if top level call and not an initiated nested recursive call.
-    },
-  })
+
+const traverseThenProcess = (targetFunction) =>
+new Proxy(targetFunction, {
+  async apply(target, thisArg, argArray) {
+    let { traverserPosition, processDataCallback } = argArray[0];
+    const { eventEmitter, depth, aggregator } = traverserPosition;
+    eventEmitter.on('nodeTraversalCompleted', data => {
+
+    });
+
+    if (traverserPosition.shouldContinue()) {
+      let traversalResultIterator = await Reflect.apply(...arguments);
+      for await (let traversal of traversalResultIterator) aggregator.merge(traversal.group.result, traversal.group.config);
+    }
+
+    if (traverserPosition.shouldExecuteProcess()) {
+      let processResult = await processDataCallback({ nextProcessData: aggregator.value, additionalParameter: {} });
+      if (traverserPosition.shouldIncludeResult()) aggregator.add(processResult);
+    }
+
+    return depth == 0 ? aggregator.finalResult : aggregator;
+  } });exports.traverseThenProcess = traverseThenProcess;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL3NvdXJjZS90cmF2ZXJzYWxJbXBsZW1lbnRhdGlvbi90cmF2ZXJzYWxJbnRlcmNlcHRpb24vcHJvY2Vzc2luZ0FuZFRyYXZlcnNpbmcuanMiXSwibmFtZXMiOlsicHJvY2Vzc1RoZW5UcmF2ZXJzZSIsInRhcmdldEZ1bmN0aW9uIiwiUHJveHkiLCJhcHBseSIsInRhcmdldCIsInRoaXNBcmciLCJhcmdBcnJheSIsInRyYXZlcnNlclBvc2l0aW9uIiwicHJvY2Vzc0RhdGFDYWxsYmFjayIsImV2ZW50RW1pdHRlciIsImRlcHRoIiwiYWdncmVnYXRvciIsIm9uIiwiZGF0YSIsInNob3VsZEV4ZWN1dGVQcm9jZXNzIiwicHJvY2Vzc1Jlc3VsdCIsIm5leHRQcm9jZXNzRGF0YSIsInZhbHVlIiwiYWRkaXRpb25hbFBhcmFtZXRlciIsInNob3VsZEluY2x1ZGVSZXN1bHQiLCJhZGQiLCJzaG91bGRDb250aW51ZSIsInRyYXZlcnNhbFJlc3VsdEl0ZXJhdG9yIiwiUmVmbGVjdCIsImFyZ3VtZW50cyIsInRyYXZlcnNhbCIsIm1lcmdlIiwiZ3JvdXAiLCJyZXN1bHQiLCJjb25maWciLCJmaW5hbFJlc3VsdCIsInRyYXZlcnNlVGhlblByb2Nlc3MiXSwibWFwcGluZ3MiOiI7OztBQUdPLE1BQU1BLG1CQUFtQixHQUFHLENBQUFDLGNBQWM7QUFDL0MsSUFBSUMsS0FBSixDQUFVRCxjQUFWLEVBQTBCO0FBQ3hCLFFBQU1FLEtBQU4sQ0FBWUMsTUFBWixFQUFvQkMsT0FBcEIsRUFBNkJDLFFBQTdCLEVBQXVDO0FBQ3JDLFFBQUksRUFBRUMsaUJBQUYsRUFBcUJDLG1CQUFyQixLQUE2Q0YsUUFBUSxDQUFDLENBQUQsQ0FBekQ7QUFDQSxVQUFNLEVBQUVHLFlBQUYsRUFBZ0JDLEtBQWhCLEVBQXVCQyxVQUF2QixLQUFzQ0osaUJBQTVDO0FBQ0FFLElBQUFBLFlBQVksQ0FBQ0csRUFBYixDQUFnQix3QkFBaEIsRUFBMENDLElBQUksSUFBSTs7QUFFakQsS0FGRDs7QUFJQSxRQUFJTixpQkFBaUIsQ0FBQ08sb0JBQWxCLEVBQUosRUFBOEM7QUFDNUMsVUFBSUMsYUFBYSxHQUFHLE1BQU1QLG1CQUFtQixDQUFDLEVBQUVRLGVBQWUsRUFBRUwsVUFBVSxDQUFDTSxLQUE5QixFQUFxQ0MsbUJBQW1CLEVBQUUsRUFBMUQsRUFBRCxDQUE3QztBQUNBLFVBQUlYLGlCQUFpQixDQUFDWSxtQkFBbEIsRUFBSixFQUE2Q1IsVUFBVSxDQUFDUyxHQUFYLENBQWVMLGFBQWY7QUFDOUM7O0FBRUQsUUFBSVIsaUJBQWlCLENBQUNjLGNBQWxCLEVBQUosRUFBd0M7QUFDdEMsVUFBSUMsdUJBQXVCLEdBQUcsTUFBTUMsT0FBTyxDQUFDcEIsS0FBUixDQUFjLEdBQUdxQixTQUFqQixDQUFwQztBQUNBLGlCQUFXLElBQUlDLFNBQWYsSUFBNEJILHVCQUE1QixFQUFxRFgsVUFBVSxDQUFDZSxLQUFYLENBQWlCRCxTQUFTLENBQUNFLEtBQVYsQ0FBZ0JDLE1BQWpDLEVBQXlDSCxTQUFTLENBQUNFLEtBQVYsQ0FBZ0JFLE1BQXpEO0FBQ3REOztBQUVELFdBQU9uQixLQUFLLElBQUksQ0FBVCxHQUFhQyxVQUFVLENBQUNtQixXQUF4QixHQUFzQ25CLFVBQTdDO0FBQ0QsR0FuQnVCLEVBQTFCLENBREssQzs7OztBQXdCQSxNQUFNb0IsbUJBQW1CLEdBQUcsQ0FBQTlCLGNBQWM7QUFDL0MsSUFBSUMsS0FBSixDQUFVRCxjQUFWLEVBQTBCO0FBQ3hCLFFBQU1FLEtBQU4sQ0FBWUMsTUFBWixFQUFvQkMsT0FBcEIsRUFBNkJDLFFBQTdCLEVBQXVDO0FBQ3JDLFFBQUksRUFBRUMsaUJBQUYsRUFBcUJDLG1CQUFyQixLQUE2Q0YsUUFBUSxDQUFDLENBQUQsQ0FBekQ7QUFDQSxVQUFNLEVBQUVHLFlBQUYsRUFBZ0JDLEtBQWhCLEVBQXVCQyxVQUF2QixLQUFzQ0osaUJBQTVDO0FBQ0FFLElBQUFBLFlBQVksQ0FBQ0csRUFBYixDQUFnQix3QkFBaEIsRUFBMENDLElBQUksSUFBSTs7QUFFakQsS0FGRDs7QUFJQSxRQUFJTixpQkFBaUIsQ0FBQ2MsY0FBbEIsRUFBSixFQUF3QztBQUN0QyxVQUFJQyx1QkFBdUIsR0FBRyxNQUFNQyxPQUFPLENBQUNwQixLQUFSLENBQWMsR0FBR3FCLFNBQWpCLENBQXBDO0FBQ0EsaUJBQVcsSUFBSUMsU0FBZixJQUE0QkgsdUJBQTVCLEVBQXFEWCxVQUFVLENBQUNlLEtBQVgsQ0FBaUJELFNBQVMsQ0FBQ0UsS0FBVixDQUFnQkMsTUFBakMsRUFBeUNILFNBQVMsQ0FBQ0UsS0FBVixDQUFnQkUsTUFBekQ7QUFDdEQ7O0FBRUQsUUFBSXRCLGlCQUFpQixDQUFDTyxvQkFBbEIsRUFBSixFQUE4QztBQUM1QyxVQUFJQyxhQUFhLEdBQUcsTUFBTVAsbUJBQW1CLENBQUMsRUFBRVEsZUFBZSxFQUFFTCxVQUFVLENBQUNNLEtBQTlCLEVBQXFDQyxtQkFBbUIsRUFBRSxFQUExRCxFQUFELENBQTdDO0FBQ0EsVUFBSVgsaUJBQWlCLENBQUNZLG1CQUFsQixFQUFKLEVBQTZDUixVQUFVLENBQUNTLEdBQVgsQ0FBZUwsYUFBZjtBQUM5Qzs7QUFFRCxXQUFPTCxLQUFLLElBQUksQ0FBVCxHQUFhQyxVQUFVLENBQUNtQixXQUF4QixHQUFzQ25CLFVBQTdDO0FBQ0QsR0FuQnVCLEVBQTFCLENBREssQyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBhc3NlcnQgZnJvbSAnYXNzZXJ0J1xuXG4vLyB2aXNpdGluZyBlYWNoIG5vZGUgYmVmb3JlIHZpc2l0aW5nIGl0J3MgY2hpbGQgbm9kZXMuXG5leHBvcnQgY29uc3QgcHJvY2Vzc1RoZW5UcmF2ZXJzZSA9IHRhcmdldEZ1bmN0aW9uID0+XG4gIG5ldyBQcm94eSh0YXJnZXRGdW5jdGlvbiwge1xuICAgIGFzeW5jIGFwcGx5KHRhcmdldCwgdGhpc0FyZywgYXJnQXJyYXkpIHtcbiAgICAgIGxldCB7IHRyYXZlcnNlclBvc2l0aW9uLCBwcm9jZXNzRGF0YUNhbGxiYWNrIH0gPSBhcmdBcnJheVswXVxuICAgICAgY29uc3QgeyBldmVudEVtaXR0ZXIsIGRlcHRoLCBhZ2dyZWdhdG9yIH0gPSB0cmF2ZXJzZXJQb3NpdGlvblxuICAgICAgZXZlbnRFbWl0dGVyLm9uKCdub2RlVHJhdmVyc2FsQ29tcGxldGVkJywgZGF0YSA9PiB7XG4gICAgICAgIC8vIGNvbnNvbGUubG9nKGRhdGEudmFsdWUsICcgcmVzb2x2ZWQuJylcbiAgICAgIH0pXG5cbiAgICAgIGlmICh0cmF2ZXJzZXJQb3NpdGlvbi5zaG91bGRFeGVjdXRlUHJvY2VzcygpKSB7XG4gICAgICAgIGxldCBwcm9jZXNzUmVzdWx0ID0gYXdhaXQgcHJvY2Vzc0RhdGFDYWxsYmFjayh7IG5leHRQcm9jZXNzRGF0YTogYWdncmVnYXRvci52YWx1ZSwgYWRkaXRpb25hbFBhcmFtZXRlcjoge30gfSlcbiAgICAgICAgaWYgKHRyYXZlcnNlclBvc2l0aW9uLnNob3VsZEluY2x1ZGVSZXN1bHQoKSkgYWdncmVnYXRvci5hZGQocHJvY2Vzc1Jlc3VsdClcbiAgICAgIH1cblxuICAgICAgaWYgKHRyYXZlcnNlclBvc2l0aW9uLnNob3VsZENvbnRpbnVlKCkpIHtcbiAgICAgICAgbGV0IHRyYXZlcnNhbFJlc3VsdEl0ZXJhdG9yID0gYXdhaXQgUmVmbGVjdC5hcHBseSguLi5hcmd1bWVudHMpXG4gICAgICAgIGZvciBhd2FpdCAobGV0IHRyYXZlcnNhbCBvZiB0cmF2ZXJzYWxSZXN1bHRJdGVyYXRvcikgYWdncmVnYXRvci5tZXJnZSh0cmF2ZXJzYWwuZ3JvdXAucmVzdWx0LCB0cmF2ZXJzYWwuZ3JvdXAuY29uZmlnIC8qKlBhc3MgdGhlIHJlbGF0ZWQgcG9ydCBub2RlIGRhdGEsIGluIGNhc2UgcmVxdWlyZWQqLylcbiAgICAgIH1cblxuICAgICAgcmV0dXJuIGRlcHRoID09IDAgPyBhZ2dyZWdhdG9yLmZpbmFsUmVzdWx0IDogYWdncmVnYXRvciAvLyBjaGVjayBpZiB0b3AgbGV2ZWwgY2FsbCBhbmQgbm90IGFuIGluaXRpYXRlZCBuZXN0ZWQgcmVjdXJzaXZlIGNhbGwuXG4gICAgfSxcbiAgfSlcblxuLy8gdmlzaW5nIHRoZSBub2RlIGFmdGVyIHZpc2l0aW5nIHRoZSBjaGlsZCBub2Rlcy5cbmV4cG9ydCBjb25zdCB0cmF2ZXJzZVRoZW5Qcm9jZXNzID0gdGFyZ2V0RnVuY3Rpb24gPT5cbiAgbmV3IFByb3h5KHRhcmdldEZ1bmN0aW9uLCB7XG4gICAgYXN5bmMgYXBwbHkodGFyZ2V0LCB0aGlzQXJnLCBhcmdBcnJheSkge1xuICAgICAgbGV0IHsgdHJhdmVyc2VyUG9zaXRpb24sIHByb2Nlc3NEYXRhQ2FsbGJhY2sgfSA9IGFyZ0FycmF5WzBdXG4gICAgICBjb25zdCB7IGV2ZW50RW1pdHRlciwgZGVwdGgsIGFnZ3JlZ2F0b3IgfSA9IHRyYXZlcnNlclBvc2l0aW9uXG4gICAgICBldmVudEVtaXR0ZXIub24oJ25vZGVUcmF2ZXJzYWxDb21wbGV0ZWQnLCBkYXRhID0+IHtcbiAgICAgICAgLy8gY29uc29sZS5sb2coZGF0YS52YWx1ZSwgJyByZXNvbHZlZC4nKVxuICAgICAgfSlcblxuICAgICAgaWYgKHRyYXZlcnNlclBvc2l0aW9uLnNob3VsZENvbnRpbnVlKCkpIHtcbiAgICAgICAgbGV0IHRyYXZlcnNhbFJlc3VsdEl0ZXJhdG9yID0gYXdhaXQgUmVmbGVjdC5hcHBseSguLi5hcmd1bWVudHMpXG4gICAgICAgIGZvciBhd2FpdCAobGV0IHRyYXZlcnNhbCBvZiB0cmF2ZXJzYWxSZXN1bHRJdGVyYXRvcikgYWdncmVnYXRvci5tZXJnZSh0cmF2ZXJzYWwuZ3JvdXAucmVzdWx0LCB0cmF2ZXJzYWwuZ3JvdXAuY29uZmlnIC8qKlBhc3MgdGhlIHJlbGF0ZWQgcG9ydCBub2RlIGRhdGEsIGluIGNhc2UgcmVxdWlyZWQqLylcbiAgICAgIH1cblxuICAgICAgaWYgKHRyYXZlcnNlclBvc2l0aW9uLnNob3VsZEV4ZWN1dGVQcm9jZXNzKCkpIHtcbiAgICAgICAgbGV0IHByb2Nlc3NSZXN1bHQgPSBhd2FpdCBwcm9jZXNzRGF0YUNhbGxiYWNrKHsgbmV4dFByb2Nlc3NEYXRhOiBhZ2dyZWdhdG9yLnZhbHVlLCBhZGRpdGlvbmFsUGFyYW1ldGVyOiB7fSB9KVxuICAgICAgICBpZiAodHJhdmVyc2VyUG9zaXRpb24uc2hvdWxkSW5jbHVkZVJlc3VsdCgpKSBhZ2dyZWdhdG9yLmFkZChwcm9jZXNzUmVzdWx0KVxuICAgICAgfVxuXG4gICAgICByZXR1cm4gZGVwdGggPT0gMCA/IGFnZ3JlZ2F0b3IuZmluYWxSZXN1bHQgOiBhZ2dyZWdhdG9yIC8vIGNoZWNrIGlmIHRvcCBsZXZlbCBjYWxsIGFuZCBub3QgYW4gaW5pdGlhdGVkIG5lc3RlZCByZWN1cnNpdmUgY2FsbC5cbiAgICB9LFxuICB9KVxuIl19
